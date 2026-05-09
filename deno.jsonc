@@ -1,0 +1,28 @@
+{
+  "imports": {
+    //just to keep deno happy creator handles this
+    "react/jsx-runtime": "npm:react/jsx-runtime",
+    "/hooks/": "/Users/Darren/Desktop/GitHub/v3/hooks/",
+    "/modules/": "/Users/Darren/Desktop/GitHub/v3/modules/modules/"
+  },
+  "tasks": {
+    "cm:fetch": "./scripts/fetch.ps1",
+    "pw:build": "./scripts/build.ps1",
+    "pw:watch": "./scripts/watch.ps1",
+    "pw:enable": "./scripts/enable.ps1",
+    "pw:disable": "./scripts/disable.ps1",
+    "build:release": "deno run -A jsr:@veryboringhwl/creator@0.0.2 release",
+    "ci:build:release": "deno run -A jsr:@veryboringhwl/creator@0.0.2 release modules/*"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noImplicitOverride": true,
+    "lib": ["DOM", "ESNext"]
+  },
+  "lint": {
+    "exclude": ["**/*"]
+  },
+  "format": {
+    "exclude": ["**/*"]
+  }
+}
