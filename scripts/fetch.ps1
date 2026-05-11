@@ -5,7 +5,7 @@ Push-Location $ModuleRoot
 try
 {
   Write-Host "Fetching classmap..."
-  & deno run -A jsr:@veryboringhwl/creator classmap-fetch --modules-dir modules --output classmap.json
+  & deno run -A @spicetify/creator classmap-fetch --modules-dir modules --output classmap.json
 } finally
 {
   Pop-Location

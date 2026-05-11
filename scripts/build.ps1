@@ -25,7 +25,7 @@ try
     $Module = Split-Path -Leaf $Dir
     $Id = Get-Id $Module
     Write-Host "Building $Id"
-    $jobs += Start-Process -FilePath "deno" -ArgumentList @("run", "-A", "jsr:@veryboringhwl/creator", "build", "--module", "$Id", "-i", "$Dir", "-o", "$Dir", "-c", "classmap.json") -NoNewWindow -PassThru
+    $jobs += Start-Process -FilePath "deno" -ArgumentList @("run", "-A", "@spicetify/creator", "build", "--module", "$Id", "-i", "$Dir", "-o", "$Dir", "-c", "classmap.json") -NoNewWindow -PassThru
   }
 
   $jobs | Wait-Process

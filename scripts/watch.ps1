@@ -18,8 +18,6 @@ try
 
   $jobs = @()
 
-  $env:SPICETIFY_CONFIG_DIR = "$env:LOCALAPPDATA\spicetify\"
-
   . "$PSScriptRoot\VARS.ps1"
 
   foreach ($Dir in $Dirs)
@@ -27,7 +25,7 @@ try
     $Module = Split-Path -Leaf $Dir
     $Id = Get-Id $Module
     Write-Host "Watching $Id"
-    $jobs += Start-Process -FilePath "deno" -ArgumentList @("run", "-A", "jsr:@veryboringhwl/creator", "build", "--module", "$Id", "-i", "$Dir", "-o", "$Dir", "-c", "classmap.json", "-w", "--debounce", "1000", "--dev") -NoNewWindow -PassThru
+    $jobs += Start-Process -FilePath "deno" -ArgumentList @("run", "-A", "@spicetify/creator", "build", "--module", "$Id", "-i", "$Dir", "-o", "$Dir", "-c", "classmap.json", "-w", "--debounce", "1000", "--dev") -NoNewWindow -PassThru
   }
 
   $jobs | Wait-Process

@@ -1,3 +1,3 @@
 # Experimental Features
 
-Customize your Spotify client directly in-app!
+Enable experimental Spotify features via the desktop client's internal experiments framework.
