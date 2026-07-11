@@ -37,8 +37,8 @@ transformer(
     return str;
   },
   {
-    glob: /^\/xpui-snapshot\.js/,
-  },
+    glob: /^\/xpui-snapshot\.js/
+  }
 );
 
 type TopbarLeftButtonProps = {
@@ -54,7 +54,7 @@ export const TopbarLeftButton = ({
   disabled,
   onClick,
   icon,
-  "data-testid": dataTestId,
+  "data-testid": dataTestId
 }: TopbarLeftButtonProps) => {
   return (
     <Tooltip label={label}>

@@ -1,12 +1,14 @@
 import { display } from "/modules/stdlib/lib/modal.tsx";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { Cards } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
 import { t } from "../../../shared/i18n.ts";
 import { RemoteMarkdown } from "../../module/components/RemoteMarkdown.tsx";
+
 import type {
   MarketplaceActionDescriptor,
   MarketplaceActionKind,
-  MarketplaceCatalogItem,
+  MarketplaceCatalogItem
 } from "../types.ts";
 
 interface ModuleCardProps {
@@ -36,7 +38,7 @@ const statusLabels = (item: MarketplaceCatalogItem): string[] => {
       : t("marketplace.card.status.disabled"),
     item.instance.isLoaded()
       ? t("marketplace.card.status.loaded")
-      : t("marketplace.card.status.unloaded"),
+      : t("marketplace.card.status.unloaded")
   ];
 };
 
@@ -89,9 +91,9 @@ export const ModuleCard = ({
   onOpenDetails,
   onRunAction,
   onSelectVersion,
-  onToggleSelected,
+  onToggleSelected
 }: ModuleCardProps) => {
-  const metadata = item.metadata;
+  const { metadata } = item;
   const name = metadata?.name ?? item.identifier;
   const description = metadata?.description ?? t("marketplace.state.noDescription");
   const metadataUrl = item.instance.getMetadataURL();
@@ -100,7 +102,7 @@ export const ModuleCard = ({
   const authors = metadata?.authors ?? [];
   const importantTags = metadata?.hasMixins ? ["mixins"] : [];
   const tags = (metadata?.tags ?? []).filter(
-    (tag) => !["theme", "app", "extension", "snippet", "lib"].includes(tag),
+    (tag) => !["theme", "app", "extension", "snippet", "lib"].includes(tag)
   );
   const [isTagsExpanded, setIsTagsExpanded] = React.useState(false);
   const hasDetails = !!item.instance.getRemoteArtifactURL();
@@ -128,7 +130,7 @@ export const ModuleCard = ({
     display({
       title: name,
       content: <RemoteMarkdown url={readmeUrl} />,
-      isLarge: true,
+      isLarge: true
     });
   };
 

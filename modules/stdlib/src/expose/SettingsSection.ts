@@ -3,12 +3,12 @@ import { transformer } from "../../mixin.ts";
 export const future = {
   push: () => {},
   pull(fn: () => void) {
-    const push = this.push;
+    const { push } = this;
     this.push = () => {
       push();
       fn();
     };
-  },
+  }
 };
 export type SettingsSectionProps = {
   /**
@@ -42,15 +42,15 @@ transformer<SettingsSection>(
   (emit) => (str) => {
     str = str.replace(
       /(\.jsxs\)\()([a-zA-Z_$][\w$]*)([^=]*"desktop.settings.compatibility")/,
-      "$1(__SettingsSection=$2)$3",
+      "$1(__SettingsSection=$2)$3"
     );
     Object.defineProperty(globalThis, "__SettingsSection", { set: emit });
     return str;
   },
   {
     glob: /^\/xpui-routes-desktop-settings\.js/,
-    wait: false,
-  },
+    wait: false
+  }
 ).then(($) => {
   SettingsSection = $;
   future.push();
@@ -60,17 +60,17 @@ transformer<SettingsRow>(
   (emit) => (str) => {
     str = str.replace(
       /(\.jsxs\)\()([a-zA-Z_$][\w$]*)([^=]*"desktop.settings.enableHardwareAcceleration")/,
-      "$1(__SettingsSectionRow=$2)$3",
+      "$1(__SettingsSectionRow=$2)$3"
     );
     Object.defineProperty(globalThis, "__SettingsSectionRow", {
-      set: emit,
+      set: emit
     });
     return str;
   },
   {
     glob: /^\/xpui-routes-desktop-settings\.js/,
-    wait: false,
-  },
+    wait: false
+  }
 ).then(($) => {
   SettingsRow = $;
 });
@@ -79,15 +79,15 @@ transformer<SettingsRowStart>(
   (emit) => (str) => {
     str = str.replace(
       /(\(\d+,\s*[a-zA-Z_$][\w$]*\.jsx\)\()([a-zA-Z_$][\w$]*)(\s*,\s*\{\s*children:\s*\(\d+,\s*[a-zA-Z_$][\w$]*\.jsx\)\([a-zA-Z_$][\w$.]*\s*,\s*\{\s*htmlFor:\s*"desktop\.settings\.enableHardwareAcceleration")/,
-      "$1(__SettingsSectionLabel=$2)$3",
+      "$1(__SettingsSectionLabel=$2)$3"
     );
     Object.defineProperty(globalThis, "__SettingsSectionLabel", { set: emit });
     return str;
   },
   {
     glob: /^\/xpui-routes-desktop-settings\.js/,
-    wait: false,
-  },
+    wait: false
+  }
 ).then(($) => {
   SettingsRowStart = $;
 });
@@ -96,17 +96,17 @@ transformer<SettingsRowEnd>(
   (emit) => (str) => {
     str = str.replace(
       /(\(\d+,\s*[a-zA-Z_$][\w$]*\.jsx\)\()([a-zA-Z_$][\w$]*)(\s*,\s*\{\s*children:\s*\(\d+,\s*[a-zA-Z_$][\w$]*\.jsx\)\([a-zA-Z_$][\w$.]*\s*,\s*\{\s*id:\s*"desktop\.settings\.enableHardwareAcceleration")/,
-      "$1(__SettingsSectionControl=$2)$3",
+      "$1(__SettingsSectionControl=$2)$3"
     );
     Object.defineProperty(globalThis, "__SettingsSectionControl", {
-      set: emit,
+      set: emit
     });
     return str;
   },
   {
     glob: /^\/xpui-routes-desktop-settings\.js/,
-    wait: false,
-  },
+    wait: false
+  }
 ).then(($) => {
   SettingsRowEnd = $;
 });

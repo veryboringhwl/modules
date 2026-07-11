@@ -8,7 +8,7 @@ type Refresh = PromiseWithResolvers<() => void> & {
 
 class RootRegistry extends Registry<React.ReactNode> {
   refresh = Object.assign(Promise.withResolvers<() => void>(), {
-    value: undefined as (() => void) | undefined,
+    value: undefined as (() => void) | undefined
   });
 
   static queueRefresh(refresh: Refresh) {
@@ -60,11 +60,11 @@ globalThis.__renderRootProviders = (providers: React.ReactElement[]) => {
     const providers = providersRegistry.all() as React.ReactElement[];
     return providers.reduceRight(
       (acc: React.ReactElement, e: React.ReactElement) => React.cloneElement(e, undefined, acc),
-      React.createElement(React.Fragment, undefined, children),
+      React.createElement(React.Fragment, undefined, children)
     );
   };
 
-  return React.useMemo(() => [providers, React.createElement(MultiProvider)].flat(), [providers]);
+  return [providers, React.createElement(MultiProvider)].flat();
 };
 transformer(
   (emit) => (str) => {
@@ -72,12 +72,12 @@ transformer(
 
     str = str.replace(
       /\bproviders:([a-zA-Z_$][\w$]*),children:\[([^\]]+"data-testid.:.root")/,
-      "providers:__renderRootProviders($1),children:[__renderRootChildren(),$2",
+      "providers:__renderRootProviders($1),children:[__renderRootChildren(),$2"
     );
 
     return str;
   },
   {
-    glob: /^\/xpui-snapshot\.js/,
-  },
+    glob: /^\/xpui-snapshot\.js/
+  }
 );

@@ -17,7 +17,7 @@ export function matchWebpackModuleSync(moduleMatcher: ModuleMatcher): ModulePair
 
 export function matchWebpackModule(
   moduleMatcher: ModuleMatcher,
-  callback: (...args: ModulePair) => void,
+  callback: (...args: ModulePair) => void
 ) {
   const sync = matchWebpackModuleSync(moduleMatcher);
   if (sync) {

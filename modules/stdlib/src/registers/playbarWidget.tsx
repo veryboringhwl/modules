@@ -27,7 +27,7 @@ globalThis.__renderNowPlayingBarWidgets = () => [
   React.createElement(() => {
     [, refresh] = React.useReducer((n) => n + 1, 0);
     return <>{registry.all()}</>;
-  }),
+  })
 ];
 
 transformer(
@@ -38,8 +38,8 @@ transformer(
     return str;
   },
   {
-    glob: /^\/dwp-now-playing-bar\.js/,
-  },
+    glob: /^\/dwp-now-playing-bar\.js/
+  }
 );
 
 export type PlaybarWidgetProps = {

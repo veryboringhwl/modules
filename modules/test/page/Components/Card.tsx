@@ -12,7 +12,7 @@ export const Card = ({
   title,
   subtitle,
   props,
-  children,
+  children
 }: {
   title: string;
   subtitle?: string;

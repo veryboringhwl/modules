@@ -5,6 +5,8 @@ import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { Color } from "/modules/stdlib/src/webpack/misc.ts";
 import { MenuItem } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
+import { logger } from "./load.tsx";
 import { Palette, PaletteManager } from "./preload.ts";
 
 export default function () {
@@ -15,7 +17,7 @@ export default function () {
   const [selectedPalette, selectPalette] = React.useReducer(
     setCurrentPalette,
     undefined,
-    getCurrentPalette,
+    getCurrentPalette
   );
 
   const getPalettes = () => PaletteManager.INSTANCE.getPalettes();
@@ -23,19 +25,19 @@ export default function () {
   const [palettes, updatePalettes] = React.useReducer(getPalettes, undefined, getPalettes);
   const [searchbar, search] = useSearchBar({
     placeholder: "Search Palettes",
-    expanded: true,
+    expanded: true
   });
 
   function createPalette() {
     PaletteManager.INSTANCE.addUserPalette(
-      new Palette(crypto.randomUUID(), "New Palette", selectedPalette.colors, false),
+      new Palette(crypto.randomUUID(), "New Palette", selectedPalette.colors, false)
     );
 
     updatePalettes();
   }
 
   const filteredPalettes = palettes.filter((palette) =>
-    palette.name.toLowerCase().includes(search.toLowerCase()),
+    palette.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -46,7 +48,7 @@ export default function () {
           <MenuItem
             divider="after"
             leadingIcon={createIconComponent({
-              icon: '<path d="M14 7H9V2H7v5H2v2h5v5h2V9h5z"/><path fill="none" d="M0 0h16v16H0z"/>',
+              icon: '<path d="M14 7H9V2H7v5H2v2h5v5h2V9h5z"/><path fill="none" d="M0 0h16v16H0z"/>'
             })}
             onClick={createPalette}
           >
@@ -60,7 +62,7 @@ export default function () {
                 trailingIcon={
                   palette === selectedPalette &&
                   createIconComponent({
-                    icon: '<path d="M15.53 2.47a.75.75 0 0 1 0 1.06L4.907 14.153.47 9.716a.75.75 0 0 1 1.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 0 1 1.06 0z"/>',
+                    icon: '<path d="M15.53 2.47a.75.75 0 0 1 0 1.06L4.907 14.153.47 9.716a.75.75 0 0 1 1.06-1.06l3.377 3.376L14.47 2.47a.75.75 0 0 1 1.06 0z"/>'
                   })
                 }
               >
@@ -104,13 +106,15 @@ const PaletteField = (props: PaletteFieldProps) => {
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+      const { value } = e.target;
       setValue(value);
 
       let color: Color;
       try {
         color = Color.fromHex(value);
-      } catch (_) {}
+      } catch (err) {
+        logger.error("Failed to parse color:", err);
+      }
       if (!color) {
         return;
       }
@@ -125,7 +129,7 @@ const PaletteField = (props: PaletteFieldProps) => {
         PaletteManager.INSTANCE.writeCurrent();
       }
     },
-    [props.palette],
+    [props.palette, props.name]
   );
 
   return (
@@ -171,7 +175,7 @@ const LocalInfo = (props: LocalInfoProps) => {
         </button>,
         <button key="rename" onClick={() => renamePalette(props.palette, name)} type="button">
           Rename
-        </button>,
+        </button>
       ]}
       <button
         onClick={() => {

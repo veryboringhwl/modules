@@ -10,7 +10,7 @@ export const configureExpFeatures = async () => {
     hideUpgradeCTA: true,
     enablePremiumUserForMiniPlayer: true,
     enableHpto: false,
-    enableSponsoredPlaylistV2: false,
+    enableSponsoredPlaylistV2: false
   };
 
   // localstorage doesnt update spotify instantly

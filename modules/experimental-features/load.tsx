@@ -1,12 +1,15 @@
-import type { ModuleInstance } from "/hooks/module.ts";
-import { createRegistrar } from "/modules/stdlib/mod.ts";
+import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { TopbarRightButton } from "/modules/stdlib/src/registers/topbarRightButton.tsx";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 import { Dialog } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
 import { Menu } from "./modal.tsx";
 
+import type { ModuleInstance } from "/hooks/module.ts";
+
 export let module: ModuleInstance;
+export let logger: Console;
 
 const Icon = () => (
   <UI.Icon fill="currentcolor" height="16" viewBox="0 0 863 924" width="16">
@@ -42,6 +45,7 @@ const TopbarButton = () => {
 };
 
 export default function (mod: ModuleInstance) {
+  logger = createLogger(mod);
   module = mod;
   const registrar = createRegistrar(mod);
   registrar.register("topbarRightButton", <TopbarButton />);

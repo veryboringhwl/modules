@@ -1,29 +1,37 @@
 {
   "imports": {
-    "@spicetify/creator": "jsr:@veryboringhwl/creator@0.0.5",
+    "@spicetify/creator": "jsr:@veryboringhwl/creator@^0.0.10",
+    "eslint-plugin-react-hooks": "npm:eslint-plugin-react-hooks@^7.1.1",
+    "oxfmt": "npm:oxfmt@^0.51.0",
+    "oxlint": "npm:oxlint@^1.66.0",
     //just to keep deno happy, creator handles this
     "react/jsx-runtime": "npm:react/jsx-runtime",
-    "/hooks/": "/Users/Darren/Desktop/GitHub/v3/hooks/",
-    "/modules/": "/Users/Darren/Desktop/GitHub/v3/modules/modules/"
+    "/modules/": "file:///D:/v3/modules/modules/",
+    "/hooks/": "file://D:/v3/hooks/",
   },
   "tasks": {
-    "cm:fetch": "./scripts/fetch.ps1",
-    "pw:build": "./scripts/build.ps1",
-    "pw:watch": "./scripts/watch.ps1",
-    "pw:enable": "./scripts/enable.ps1",
-    "pw:disable": "./scripts/disable.ps1",
-    "build:release": "deno run -A @spicetify/creator release",
-    "ci:build:release": "deno run -A @spicetify/creator release modules/*"
+    "fmt": "deno run -A npm:oxfmt -c .oxfmtrc.json",
+    "lint": "deno run -A npm:oxlint -c .oxlintrc.json",
+    "check": "deno check",
+    "fetch": "deno run -A ./scripts/fetch.ts",
+    "build": "deno run -A ./scripts/build.ts",
+    "watch": "deno run -A ./scripts/watch.ts",
+    "enable": "deno run -A ./scripts/enable.ts",
+    "disable": "deno run -A ./scripts/disable.ts",
+    "local": "deno run -A ./scripts/local.ts",
+    "release": {
+      "dependencies": ["fmt", "lint"],
+    },
   },
   "compilerOptions": {
     "jsx": "react-jsx",
     "noImplicitOverride": true,
-    "lib": ["DOM", "ESNext"]
+    "lib": ["DOM", "ESNext", "deno.ns"],
   },
   "lint": {
-    "exclude": ["**/*"]
+    "exclude": ["**/*"],
   },
   "format": {
-    "exclude": ["**/*"]
-  }
+    "exclude": ["**/*"],
+  },
 }

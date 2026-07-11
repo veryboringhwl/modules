@@ -1,18 +1,20 @@
 import { findBy } from "/hooks/util.ts";
+
 import { Platform } from "../expose/Platform.ts";
-import type { React } from "../expose/React.ts";
 import { exportedFunctions } from "./index.ts";
+
+import type { React } from "../expose/React.ts";
 
 await globalThis.CHUNKS.xpui.promise;
 
 export const RemoteConfigProviderComponent = findBy(
   "resolveSuspense",
-  "configuration",
+  "configuration"
 )(exportedFunctions);
 
 export const RemoteConfigProvider = ({
   configuration = Platform.getRemoteConfiguration(),
-  children,
+  children
 }: {
   configuration?: ReturnType<typeof Platform.getRemoteConfiguration>;
   children?: React.ReactNode;
@@ -23,16 +25,16 @@ export const RemoteConfigProvider = ({
 );
 
 export const SnackbarProvider: React.FC<any> = findBy(
-  "enqueueSnackbar called with invalid argument",
+  "enqueueSnackbar called with invalid argument"
 )(exportedFunctions);
 
 export const StoreProvider: React.FC<any> = findBy(
   "notifyNestedSubs",
-  "serverState",
+  "serverState"
 )(exportedFunctions);
 
 export const TracklistColumnsContextProvider: React.FC<any> = findBy(
   "columns",
   "visibleColumns",
-  "toggleVisible",
+  "toggleVisible"
 )(exportedFunctions);

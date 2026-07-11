@@ -1,4 +1,5 @@
 import { findBy } from "/hooks/util.ts";
+
 import { Platform } from "../expose/Platform.ts";
 import { exported, exportedFunctions } from "./index.ts";
 
@@ -11,14 +12,14 @@ export const usePanelAPI: Function = findBy("panelSend", "context")(exportedFunc
 export const useContextMenuState: Function = findBy("useContextMenuState")(exportedFunctions);
 
 export const imageAnalysis: Function = findBy(/![a-zA-Z_$][\w$]*\.isFallback|\{extractColor/)(
-  exportedFunctions,
+  exportedFunctions
 );
 
 export const fallbackPreset: any = exported.find((m) => m.colorDark);
 
 export const getPlayContext: Function = findBy(
   "referrerIdentifier",
-  "usePlayContextItem",
+  "usePlayContextItem"
 )(exportedFunctions);
 
 export const useTrackListColumns: Function = findBy("useTrackListColumns")(exportedFunctions);

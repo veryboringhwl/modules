@@ -15,14 +15,14 @@ transformer(
 
     str = str.replace(
       /(\(0,[a-zA-Z_$][\w$]*\.jsx\)\([a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*,\{[^{]*path:"\/search\/\*")/,
-      "...__renderRoutes(),$1",
+      "...__renderRoutes(),$1"
     );
 
     return str;
   },
   {
-    glob: /^\/xpui-snapshot\.js/,
-  },
+    glob: /^\/xpui-snapshot\.js/
+  }
 );
 
 // use spicetify route to not have the topbar
@@ -34,6 +34,6 @@ transformer(
     return str;
   },
   {
-    glob: /^\/dwp-top-bar\.js/,
-  },
+    glob: /^\/dwp-top-bar\.js/
+  }
 );

@@ -8,7 +8,7 @@ export type WebpackModule = <This extends {}>(
   this: This,
   module: { id: keyof any; loaded: false; exports: This },
   exports: This,
-  require: WebpackRequire,
+  require: WebpackRequire
 ) => void;
 export type WebpackModules = Record<keyof any, WebpackModule>;
 export type WebpackChunk = [Array<keyof any>, WebpackModules, (wpr: WebpackRequire) => void];
@@ -70,8 +70,8 @@ const webpackChunkclient_web = [
     {},
     ($: WebpackRequire) => {
       setWebpackRequire($);
-    },
-  ] as WebpackChunk,
+    }
+  ] as WebpackChunk
 ];
 
 if (globalThis.__webpack_require__) {
@@ -107,7 +107,7 @@ function trap(fn: (chunk: WebpackChunk) => void) {
           moduleLoadedSubject.next([p, newValue]);
         }
         return ok;
-      },
+      }
     });
 
     fn(chunk);
@@ -149,5 +149,5 @@ globalThis.webpackChunkclient_web = new Proxy(webpackChunkclient_web, {
     };
 
     return Reflect.set(target, p, push, receiver);
-  },
+  }
 });

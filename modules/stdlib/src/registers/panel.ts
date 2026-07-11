@@ -1,6 +1,7 @@
-import type { createMachine as createMachineT } from "npm:xstate";
 import { transformer } from "../../mixin.ts";
 import { Registry } from "./registry.ts";
+
+import type { createMachine as createMachineT } from "npm:xstate";
 
 export type StateMachine = ReturnType<typeof createMachineT>;
 export let Machine: StateMachine;
@@ -29,18 +30,18 @@ const registry = new (class extends Registry<React.ReactNode> {
     stateToNode.set(state, value);
 
     ON[event] = {
-      target: state,
+      target: state
     };
 
     STATES[state] = {
       on: Object.setPrototypeOf(
         {
           [event]: {
-            target: "disabled",
-          },
+            target: "disabled"
+          }
         },
-        ON,
-      ),
+        ON
+      )
     };
 
     if (onEntry) {
@@ -50,7 +51,7 @@ const registry = new (class extends Registry<React.ReactNode> {
     }
     if (onExit) {
       const exit = `bespoke_${hash}_exit`;
-      const states = Machine.config.states;
+      const { states } = Machine.config;
       if (states?.[state]) {
         states[state].exit = [exit];
       }
@@ -99,7 +100,7 @@ transformer(
     // usePanelStateMachine();
     str = str.replace(
       /(=\(0,[a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*\)\(\{id:"RightPanelState)/,
-      "=__Machine$1",
+      "=__Machine$1"
     );
 
     Object.defineProperty(globalThis, "__Machine", {
@@ -112,9 +113,9 @@ transformer(
             ...Machine.config.states?.disabled.on,
             panel_close_click: [
               {
-                target: "disabled",
-              },
-            ],
+                target: "disabled"
+              }
+            ]
           };
           delete ON.playback_autoplay_context_changed;
 
@@ -128,7 +129,7 @@ transformer(
                 }
                 // @ts-expect-error
                 return target[p];
-              },
+              }
             });
           }
 
@@ -137,32 +138,32 @@ transformer(
           Machine._options.actions = ACTIONS;
         });
       },
-      get: () => Machine,
+      get: () => Machine
     });
 
     str = str.replace(
       /((?=(?:(?!default:)[\s\S])*?\.Queue:)(?=(?:(?!default:)[\s\S])*?\.DevicePicker:)(?=(?:(?!default:)[\s\S])*?\.Disabled:)(?:case\s+[\w$]+\.[\w$]+\.\w+:\s*)+return\s*!0;\s*default:\s*)/,
-      "$1return true;",
+      "$1return true;"
     );
 
     return str;
   },
   {
-    glob: /^\/xpui-modules\.js/,
-  },
+    glob: /^\/xpui-modules\.js/
+  }
 );
 
 transformer(
   (emit) => (str) => {
     str = str.replace(
       /("PanelSection"[\s\S]*?pageId[\s\S]*?children\s*:\s*\[\s*)(?=(?:(?!in:)[\s\S])*?in:\s*([a-zA-Z_$][\w$]*)\s*===)/,
-      "$1__renderPanel($2),",
+      "$1__renderPanel($2),"
     );
     emit();
 
     return str;
   },
   {
-    glob: /^\/dwp-panel-section\.js/,
-  },
+    glob: /^\/dwp-panel-section\.js/
+  }
 );

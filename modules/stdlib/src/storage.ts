@@ -1,7 +1,7 @@
-import type { ModuleInstance } from "/hooks/module.ts";
-
 import { Platform } from "./expose/Platform.ts";
 import { fromString } from "./webpack/URI.ts";
+
+import type { ModuleInstance } from "/hooks/module.ts";
 
 export const createStorage = (mod: ModuleInstance) => {
   const hookedNativeStorageMethods = new Set(["getItem", "setItem", "removeItem"]);
@@ -20,7 +20,7 @@ export const createStorage = (mod: ModuleInstance) => {
       }
 
       return func;
-    },
+    }
   });
 };
 
@@ -38,7 +38,7 @@ export function createSyncedStorage(playlistUri: string) {
     encodedKey: string,
     chunk_size: number,
     chunk_count: number,
-    message: string,
+    message: string
   ) {
     for (let n = 0, o = 0, l = 0; ; l++) {
       if (chunk_size * n + l + o >= encodedKey.length) {
@@ -62,7 +62,7 @@ export function createSyncedStorage(playlistUri: string) {
 
     const { items } = await PlaylistAPI.getContents(playlistUri, {
       filter: key,
-      limit: 1e9,
+      limit: 1e9
     });
 
     return items
@@ -85,7 +85,7 @@ export function createSyncedStorage(playlistUri: string) {
     if (uris.length > 0) {
       await PlaylistAPI.remove(
         playlistUri,
-        uris.map((u) => ({ uri: u.toURI(), uid: "" })),
+        uris.map((u) => ({ uri: u.toURI(), uid: "" }))
       );
     }
   }
@@ -95,11 +95,11 @@ export function createSyncedStorage(playlistUri: string) {
       encodedValue,
       CHUNK_SIZE,
       MAX_DOUBLE_CHUNKS,
-      `Can't fit value in ${MAX_DOUBLE_CHUNKS} double chunks`,
+      `Can't fit value in ${MAX_DOUBLE_CHUNKS} double chunks`
     );
 
     const uris = Array.from(
-      collectTuples(generateStringChunks(encodedValue, CHUNK_SIZE), 2, ""),
+      collectTuples(generateStringChunks(encodedValue, CHUNK_SIZE), 2, "")
     ).map(([a, b], i) => `spotify:local:${a}:${b}:${key}:${i + 1}`);
 
     await PlaylistAPI.add(playlistUri, uris, { after: "end" });
@@ -113,7 +113,7 @@ export function createSyncedStorage(playlistUri: string) {
     async removeItem(key: string) {
       try {
         await removeKey(markKey(key));
-      } catch (_) {
+      } catch {
         return false;
       }
       return true;
@@ -123,7 +123,7 @@ export function createSyncedStorage(playlistUri: string) {
       await removeKey(markKey(key));
       await addKey(markKey(key), encodedValue);
       return value;
-    },
+    }
   };
 }
 

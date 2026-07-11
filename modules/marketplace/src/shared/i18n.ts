@@ -1,6 +1,7 @@
 import i18n from "https://esm.sh/i18next";
 import LanguageDetector from "https://esm.sh/i18next-browser-languagedetector";
 import { initReactI18next } from "https://esm.sh/react-i18next";
+
 import locales from "./locales/index.ts";
 
 export const t = await i18n
@@ -9,10 +10,10 @@ export const t = await i18n
   .init({
     resources: locales,
     detection: {
-      order: ["navigator", "htmlTag"],
+      order: ["navigator", "htmlTag"]
     },
     fallbackLng: "en",
     interpolation: {
-      escapeValue: false,
-    },
+      escapeValue: false
+    }
   });

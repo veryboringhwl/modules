@@ -1,4 +1,12 @@
 import { fnStr } from "/hooks/util.ts";
+
+import {
+  exportedForwardRefs,
+  exportedFunctions,
+  exportedMemoForwardRefs,
+  exportedMemos
+} from "./index.ts";
+
 import type { React } from "../expose/React.ts";
 import type {
   AdaptiveTitleProps,
@@ -31,14 +39,8 @@ import type {
   TextProps,
   TypeListProps,
   TypeProps,
-  VisuallyHiddenProps,
+  VisuallyHiddenProps
 } from "./ComponentLibrary.types.tsx";
-import {
-  exportedForwardRefs,
-  exportedFunctions,
-  exportedMemoForwardRefs,
-  exportedMemos,
-} from "./index.ts";
 
 await globalThis.CHUNKS.xpui.promise;
 
@@ -50,7 +52,7 @@ const componentPairs = [
   exportedFunctions.map((f) => [f, f]),
   exportedForwardRefs.map((f) => [(f as any).render, f]),
   exportedMemos.map((f) => [(f as any).type, f]),
-  exportedMemoForwardRefs.map((f) => [(f as any).type?.render ?? (f as any).render, f]),
+  exportedMemoForwardRefs.map((f) => [(f as any).type?.render ?? (f as any).render, f])
 ]
   .flat()
   .map(([s, f]) => {

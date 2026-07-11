@@ -29,7 +29,7 @@ onWebpackRequireReady(($) => {
       CosmosRequestSubject.next(request);
 
       return $sendCosmosRequest($);
-    },
+    }
   });
 });
 

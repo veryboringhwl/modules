@@ -1,7 +1,9 @@
 import { toPascalCase } from "/hooks/std/text.ts";
 import { fnStr } from "/hooks/util.ts";
+
 import { webpackRequire } from "../wpunpk.mix.ts";
 import { modules } from "./index.ts";
+
 import type { IsThisURIType, ParsableAsURI, URIClass, URITypes } from "./URI.ts";
 
 type Is = {
@@ -54,7 +56,7 @@ await globalThis.CHUNKS.xpui.promise;
 
 const [URIModuleID] = modules.find(
   ([id, v]) =>
-    fnStr(v).includes("Invalid Spotify URI!") && Object.keys(webpackRequire(id)).length > 10,
+    fnStr(v).includes("Invalid Spotify URI!") && Object.keys(webpackRequire(id)).length > 10
 )!;
 
 const URIModule = webpackRequire(URIModuleID);
@@ -63,7 +65,7 @@ const URIModule = webpackRequire(URIModuleID);
 // ✅ Find Types safely
 //
 const TypesEntry = Object.values(URIModule).find(
-  (v: any) => v && typeof v === "object" && "PLAYLIST_V2" in v && "TRACK" in v,
+  (v: any) => v && typeof v === "object" && "PLAYLIST_V2" in v && "TRACK" in v
 );
 
 if (!TypesEntry) {
@@ -77,6 +79,42 @@ const TypesKeys = Object.keys(Types);
 // ✅ Extract all functions
 //
 const vs = Object.values(URIModule).filter((v): v is Function => typeof v === "function");
+
+//
+// ✅ Handle utility functions FIRST so they are not swallowed by isTestFn or isCreateFn
+//
+const remainingFns = [...vs];
+
+const findAndExcludeBy = (matcher: (fn: Function, str: string) => boolean) => {
+  const i = remainingFns.findIndex((fn) => matcher(fn, fnStr(fn)));
+  if (i === -1) return undefined;
+  return remainingFns.splice(i, 1)[0];
+};
+
+// ✅ Special functions (robust matching)
+export const from: (uri: ParsableAsURI) => URIClass<any> = findAndExcludeBy((_, str) =>
+  str.includes("allowedTypes")
+) as any;
+
+export const fromString: (str: string) => URIClass<any> = findAndExcludeBy(
+  (_, str) => str.includes("Argument `uri`") || str.includes("Argument \\`uri\\`")
+) as any;
+
+export const idToHex: (str: string) => string = findAndExcludeBy(
+  (_, str) => /22\s*===/.test(str) || /===\s*22/.test(str)
+) as any;
+
+export const hexToId: (str: string) => string = findAndExcludeBy(
+  (_, str) => /32\s*===/.test(str) || /===\s*32/.test(str)
+) as any;
+
+export const urlEncode: (str: string) => string = findAndExcludeBy((_, str) =>
+  str.includes(".URI")
+) as any;
+
+export const isSameIdentity: (a: ParsableAsURI, b: ParsableAsURI) => boolean = findAndExcludeBy(
+  (_, str) => /\w+\.id\s*===\s*\w+\.id/.test(str)
+) as any;
 
 //
 // ✅ Helpers (NO minified names)
@@ -108,8 +146,8 @@ const getTypeFromFn = (fn: Function) => {
 //
 // ✅ Group functions
 //
-const fnsByType = Object.groupBy(vs, (fn) =>
-  isTestFn(fn) ? "test" : isCreateFn(fn) ? "create" : "unknown",
+const fnsByType = Object.groupBy(remainingFns, (fn) =>
+  isTestFn(fn) ? "test" : isCreateFn(fn) ? "create" : "unknown"
 );
 
 //
@@ -120,7 +158,7 @@ export const is: Is = Object.fromEntries(
     const type = getTypeFromFn(fn);
     if (!type) return ["Unknown", fn];
     return [toPascalCase(type), fn];
-  }),
+  })
 ) as any;
 
 export const create: Create = Object.fromEntries(
@@ -128,43 +166,5 @@ export const create: Create = Object.fromEntries(
     const type = getTypeFromFn(fn);
     if (!type) return ["Unknown", fn];
     return [toPascalCase(type), fn];
-  }),
-) as any;
-
-//
-// ✅ Handle remaining utility functions
-//
-const uniqueFns = [...(fnsByType.unknown || [])];
-
-const findAndExcludeBy = (matcher: (fn: Function, str: string) => boolean) => {
-  const i = uniqueFns.findIndex((fn) => matcher(fn, fnStr(fn)));
-  if (i === -1) return undefined;
-  return uniqueFns.splice(i, 1)[0];
-};
-
-//
-// ✅ Special functions (robust matching)
-//
-export const from: (uri: ParsableAsURI) => URIClass<any> = findAndExcludeBy((_, str) =>
-  str.includes("allowedTypes"),
-) as any;
-
-export const fromString: (str: string) => URIClass<any> = findAndExcludeBy((_, str) =>
-  str.includes("Argument `uri`"),
-) as any;
-
-export const idToHex: (str: string) => string = findAndExcludeBy((_, str) =>
-  str.includes("22==="),
-) as any;
-
-export const hexToId: (str: string) => string = findAndExcludeBy((_, str) =>
-  str.includes("32==="),
-) as any;
-
-export const urlEncode: (str: string) => string = findAndExcludeBy((_, str) =>
-  str.includes(".URI"),
-) as any;
-
-export const isSameIdentity: (a: ParsableAsURI, b: ParsableAsURI) => boolean = findAndExcludeBy(
-  (_, str) => /\.id===.*\.id/.test(str),
+  })
 ) as any;

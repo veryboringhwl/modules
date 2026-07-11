@@ -1,8 +1,10 @@
+import { logger } from "../load.ts";
+
 export const waitForElement = <E extends Element>(
   selector: string,
   timeout = 5000,
   location = document.body,
-  notEl?: E | null,
+  notEl?: E | null
 ) =>
   new Promise((resolve: (value: E) => void, reject) => {
     const onMutation = () => {
@@ -21,15 +23,16 @@ export const waitForElement = <E extends Element>(
 
     observer.observe(location, {
       childList: true,
-      subtree: true,
+      subtree: true
     });
 
-    if (timeout)
+    if (timeout) {
       setTimeout(() => {
         observer.disconnect();
-        console.debug();
+        logger.debug(`waitForElement: timed out waiting for ${selector}`);
         reject(`waitForElement: timed out waiting for ${selector}`);
       }, timeout);
+    }
   });
 
 export const mainElement = document.querySelector("main")!;

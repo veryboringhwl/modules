@@ -1,8 +1,8 @@
 import { toPascalCase } from "/hooks/std/text.ts";
 import { findBy, fnStr } from "/hooks/util.ts";
+
 import { webpackRequire } from "../wpunpk.mix.ts";
 import { matchWebpackModule } from "../wpunpk.ts";
-
 import { exportedFunctions, exportedMemoForwardRefs, exportedMemos, modules } from "./index.ts";
 
 await globalThis.CHUNKS.xpui.promise;
@@ -16,20 +16,20 @@ export const Menus: any = Object.fromEntries(
       album: "Album",
       show: "PodcastShow",
       artist: "Artist",
-      track: "Track",
+      track: "Track"
     }[name];
     return type ? [[type, m]] : [];
-  }),
+  })
 );
 
 const [playlistMenuModuleID] = modules.find(
   ([, v]) =>
     fnStr(v).includes("isRootlistable") &&
     fnStr(v).includes("canAdministratePermissions") &&
-    fnStr(v).includes("isPublished"),
+    fnStr(v).includes("isPublished")
 )!;
 Menus.Playlist = Object.values(webpackRequire(playlistMenuModuleID)).find(
-  (m) => typeof m === "function" || typeof m === "object",
+  (m) => typeof m === "function" || typeof m === "object"
 );
 
 export const Cards: any = Object.assign(
@@ -39,10 +39,10 @@ export const Cards: any = Object.assign(
         fnStr(f).includes("OnMouseDown") &&
         fnStr(f).match(/^[^;]*headerText/) &&
         fnStr(f).match(/^[^;]*featureIdentifier/) &&
-        fnStr(f).match(/^[^;]*renderCardImage/),
+        fnStr(f).match(/^[^;]*renderCardImage/)
     ),
     HeroGeneric: findBy("herocard-click-handler")(exportedFunctions),
-    CardImage: findBy('"card-image"')(exportedFunctions),
+    CardImage: findBy('"card-image"')(exportedFunctions)
   },
   Object.fromEntries(
     [
@@ -53,7 +53,7 @@ export const Cards: any = Object.assign(
           if (!match) return [];
           const name = match[1];
           return [[toPascalCase(name), m]];
-        } catch (_e) {
+        } catch {
           return [];
         }
       }),
@@ -64,21 +64,21 @@ export const Cards: any = Object.assign(
           if (!match) return [];
           const name = match[1];
           return [[toPascalCase(name), m]];
-        } catch (_e) {
+        } catch {
           return [];
         }
-      }),
-    ].flat(2),
-  ),
+      })
+    ].flat(2)
+  )
 );
 
 const [NavigationModule] = modules.find(
-  ([_, v]) => fnStr(v).includes("navigationalRoot") && fnStr(v).includes("noLink"),
+  ([_, v]) => fnStr(v).includes("navigationalRoot") && fnStr(v).includes("noLink")
 );
 export const Nav = Object.values(webpackRequire(NavigationModule))[0];
 
 export const NavTo: React.FC<any> = exportedMemoForwardRefs.find((m) =>
-  fnStr(m.type.render).includes("pageId"),
+  fnStr(m.type.render).includes("pageId")
 )!;
 
 // 1. Set a default category (e.g., /tracks) when the user hits the root path.
@@ -92,7 +92,7 @@ matchWebpackModule(
   (id, _$) => {
     const module = webpackRequire(id);
     InstrumentedRedirect = Object.values(module)[0];
-  },
+  }
 );
 
 const [ContextMenuModuleID] = modules.find(([_, v]) => fnStr(v).includes("toggleContextMenu"))!;
@@ -102,7 +102,7 @@ export const RightClickMenu: React.FC<any> = findBy(
   "action",
   "open",
   "trigger",
-  "right-click",
+  "right-click"
 )(exportedFunctions);
 
 export const Tooltip: React.FC<any> = findBy("hover-or-focus", "tooltip")(exportedFunctions);
@@ -117,49 +117,49 @@ export const Snackbar = {
   wrapper: findBy("encore-light-theme", "elevated")(exportedFunctions),
   simpleLayout: findBy("leading", "center", "trailing")(exportedFunctions),
   ctaText: findBy("ctaText")(exportedFunctions),
-  styledImage: findBy("placeholderSrc")(exportedFunctions),
+  styledImage: findBy("placeholderSrc")(exportedFunctions)
 };
 
 export const FilterBox: React.NamedExoticComponent = exportedMemos.find((f) =>
-  fnStr(f.type).includes("filterBoxApiRef"),
+  fnStr(f.type).includes("filterBoxApiRef")
 )!;
 
 const [ScrollableContainerModule] = modules.find(
-  ([_, v]) => fnStr(v).includes("scrollLeft") && fnStr(v).includes("showButtons"),
+  ([_, v]) => fnStr(v).includes("scrollLeft") && fnStr(v).includes("showButtons")
 );
 const ScrollableContainerExports = Object.values(webpackRequire(ScrollableContainerModule));
 export const ScrollableContainer: React.FC<any> = ScrollableContainerExports.find(
-  (m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof"),
+  (m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof")
 );
 
 const [ConfirmDialogModule] = modules.find(([_, v]) =>
-  fnStr(v).includes("confirm-dialog-description"),
+  fnStr(v).includes("confirm-dialog-description")
 );
 const ConfirmDialogExports = Object.values(webpackRequire(ConfirmDialogModule));
 export const ConfirmDialog: React.FC<any> = ConfirmDialogExports.find(
-  (m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof"),
+  (m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof")
 );
 
 export const Router: React.FC<any> = findBy("navigationType", "static")(exportedFunctions);
 
 export const Routes: React.FC<any> = findBy(
-  /\([a-zA-Z_$][\w$]*\)\{let\{children:[a-zA-Z_$][\w$]*,location:[a-zA-Z_$][\w$]*\}=[a-zA-Z_$][\w$]*/,
+  /\([a-zA-Z_$][\w$]*\)\{let\{children:[a-zA-Z_$][\w$]*,location:[a-zA-Z_$][\w$]*\}=[a-zA-Z_$][\w$]*/
 )(exportedFunctions);
 
 export const Route: React.FC<any> = findBy(
-  /^function [a-zA-Z_$][\w$]*\([a-zA-Z_$][\w$]*\)\{\(0,[a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*\)\(!1\)\}$/,
+  /^function [a-zA-Z_$][\w$]*\([a-zA-Z_$][\w$]*\)\{\(0,[a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*\)\(!1\)\}$/
 )(exportedFunctions);
 
 export const GenericModal: React.FC<any> = findBy(
   "isOpen",
   "contentLabel",
-  "animated",
+  "animated"
 )(exportedFunctions);
 
 export const Dialog: React.FC<any> = findBy("isOpen", "unmountWhenClose")(exportedFunctions);
 
 export const Tracklist: React.FC<any> = exportedMemos.find((f) =>
-  fnStr(f.type).includes("nrValidItems"),
+  fnStr(f.type).includes("nrValidItems")
 )!;
 
 export const IconWrapper: React.FC<any> = findBy("button__icon-wrapper")(exportedFunctions);

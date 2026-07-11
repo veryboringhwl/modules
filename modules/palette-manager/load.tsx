@@ -1,8 +1,11 @@
-import type { ModuleInstance } from "/hooks/module.ts";
-import { createRegistrar } from "/modules/stdlib/mod.ts";
+import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
 import { Color } from "/modules/stdlib/src/webpack/misc.ts";
 
+import type { ModuleInstance } from "/hooks/module.ts";
+
+export let logger: Console;
 export default async function (mod: ModuleInstance) {
+  logger = createLogger(mod);
   const registrar = createRegistrar(mod);
 
   const { EditButton } = await import("./paletteManager.tsx");
@@ -27,7 +30,7 @@ export default async function (mod: ModuleInstance) {
       tab: Color.fromHex("#c0b4b4"),
       tab_active: Color.fromHex("#FF4151"),
       playbar: Color.fromHex("#c0b4b4"),
-      playbar_active: Color.fromHex("#FF4151"),
+      playbar_active: Color.fromHex("#FF4151")
     })
     .register("Nord", {
       text: Color.fromHex("#eceff4"),
@@ -44,6 +47,6 @@ export default async function (mod: ModuleInstance) {
       tab: Color.fromHex("#d8dee9"),
       tab_active: Color.fromHex("#81a1c1"),
       playbar: Color.fromHex("#81a1c1"),
-      playbar_active: Color.fromHex("#8fbcbb"),
+      playbar_active: Color.fromHex("#8fbcbb")
     });
 }

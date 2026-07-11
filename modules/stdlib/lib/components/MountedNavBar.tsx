@@ -1,6 +1,7 @@
-import type { React } from "../../src/expose/React.ts";
 import { UI } from "../../src/webpack/ComponentLibrary.xpui.ts";
 import { NavTo } from "../../src/webpack/ReactComponents.xpui.ts";
+
+import type { React } from "../../src/expose/React.ts";
 
 interface NavToChipProps {
   to: string;

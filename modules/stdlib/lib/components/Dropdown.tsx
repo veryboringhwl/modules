@@ -1,12 +1,13 @@
-import type { React } from "../../src/expose/React.ts";
 import { UI } from "../../src/webpack/ComponentLibrary.ts";
 import { ContextMenu, Menu, MenuItem } from "../../src/webpack/ReactComponents.ts";
 import { createIconComponent } from "../createIconComponent.tsx";
 
+import type { React } from "../../src/expose/React.ts";
+
 const CheckIcon = () =>
   createIconComponent({
     // TODO
-    icon: "" /*  SVGIcons.check */,
+    icon: "" /*  SVGIcons.check */
   });
 
 interface MenuItemProps<O extends string> {
@@ -19,10 +20,10 @@ const DropdownMenuItem = <O extends string>({
   option,
   isActive,
   onSwitch,
-  children,
+  children
 }: MenuItemProps<O>) => {
   const activeStyle = {
-    backgroundColor: "rgba(var(--spice-rgb-selected-row),.1)",
+    backgroundColor: "rgba(var(--spice-rgb-selected-row),.1)"
   };
 
   return (
@@ -51,7 +52,7 @@ interface DropdownMenuProps<O extends DropdownOptions> {
 export default function <O extends DropdownOptions>({
   options,
   activeOption,
-  onSwitch,
+  onSwitch
 }: DropdownMenuProps<O>) {
   const SelectedOption: React.FC<OptionProps> = options[activeOption];
 
@@ -70,6 +71,7 @@ export default function <O extends DropdownOptions>({
       <Menu {...props}>
         {Object.entries(options).map(([option, Children]) => (
           <DropdownMenuItem
+            key={option}
             isActive={option === activeOption}
             onSwitch={onSwitch}
             option={option as Extract<NoInfer<keyof O>, string>}

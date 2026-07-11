@@ -2,7 +2,9 @@ import { hotwired, type MixinContext } from "/hooks/module.ts";
 
 const nativeObjectDefineProperty = Object.defineProperty;
 Object.defineProperty = (obj, prop, descriptor) => {
-  prop !== "prototype" && descriptor && (descriptor.configurable ??= true);
+  if (prop !== "prototype" && descriptor) {
+    descriptor.configurable ??= true;
+  }
   return nativeObjectDefineProperty(obj, prop, descriptor);
 };
 
@@ -20,7 +22,7 @@ promise.wrap(
       import("./src/expose/index.ts"),
       import("./src/registers/index.ts"),
       import("./src/events.mix.ts"),
-      import("./src/wpunpk.mix.ts"),
+      import("./src/wpunpk.mix.ts")
     ]);
-  })(),
+  })()
 );

@@ -39,7 +39,7 @@ globalThis.__renderMenuItems = () => [
   React.createElement(() => {
     [, refresh] = React.useReducer((n) => n + 1, 0);
     return <>{registry.all()}</>;
-  }),
+  })
 ];
 
 transformer(
@@ -47,7 +47,7 @@ transformer(
     str = str.replace(/("Menu".+?children:)([\w$][\w$\d]*)/, "$1[__renderMenuItems(),$2].flat()");
 
     const contextMenuBlockMatch = str.match(
-      /[\w_$]+\s*=\s*\({menu:[\s\S]+?"context-menu"[\s\S]+?\}\)/,
+      /[\w_$]+\s*=\s*\({menu:[\s\S]+?"context-menu"[\s\S]+?\}\)/
     );
     if (!contextMenuBlockMatch) return str;
     const contextMenuBlock = contextMenuBlockMatch[0];
@@ -68,13 +68,13 @@ transformer(
       (_, fullArgs, singleArg, originalRender, jsxVar) => {
         const argName = singleArg || fullArgs;
         return `render:(${argName})=>{const value=${value};return (${jsxVar}.jsx)((globalThis.__MenuContext??=${react}.createContext(null)).Provider,{value,children:((${argName})=>${originalRender})(${argName})})}`;
-      },
+      }
     );
 
     emit();
     return str;
   },
   {
-    glob: /^\/xpui-modules\.js/,
-  },
+    glob: /^\/xpui-modules\.js/
+  }
 );

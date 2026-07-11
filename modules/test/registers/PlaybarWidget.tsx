@@ -1,6 +1,8 @@
 import { PlaybarWidget } from "/modules/stdlib/src/registers/playbarWidget.tsx";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 
+import { logger } from "../load.tsx";
+
 export const TestPlaybarWidget = () => (
   <PlaybarWidget
     icon={
@@ -17,7 +19,7 @@ export const TestPlaybarWidget = () => (
     }
     label="test-button"
     onClick={() => {
-      console.log("test-button clicked");
+      logger.log("test-button clicked");
     }}
   />
 );

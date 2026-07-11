@@ -5,14 +5,14 @@ const en = {
         heading: "Marketplace",
         hideCore: "Hide core modules (stdlib, marketplace, ...)",
         description:
-          "Use Marketplace to install and enable modules. Enabling also loads modules automatically.",
+          "Use Marketplace to install and enable modules. Enabling also loads modules automatically."
       },
       sort: {
         label: "Sort by:",
         default: "Default",
         "a-z": "A-Z",
         "z-a": "Z-A",
-        random: "Random",
+        random: "Random"
       },
       filters: {
         themes: "Themes",
@@ -20,22 +20,22 @@ const en = {
         apps: "Apps",
         snippets: "Snippets",
         libs: "Libraries",
-        enabled: "Enabled",
+        enabled: "Enabled"
       },
       search: {
-        placeholder: "Search modules",
+        placeholder: "Search modules"
       },
       toolbar: {
         refresh: "Refresh",
         selectVisible: "Select Visible",
         clearSelection: "Clear Selection",
-        versionControls: "Version Controls",
+        versionControls: "Version Controls"
       },
       selection: {
         enableSelected: "Enable Selected",
         enableSelectedCount: "Enable Selected ({{count}})",
         enabling: "Enabling...",
-        modulesCount: "{{count}} modules",
+        modulesCount: "{{count}} modules"
       },
       state: {
         working: "Working...",
@@ -48,7 +48,7 @@ const en = {
         loadingReadme: "Loading README...",
         failedReadme: "Failed to load README content.",
         noReadme: "No README available.",
-        noDescription: "No description available yet.",
+        noDescription: "No description available yet."
       },
       card: {
         version: "Version",
@@ -62,8 +62,8 @@ const en = {
           enabled: "enabled",
           disabled: "disabled",
           loaded: "loaded",
-          unloaded: "unloaded",
-        },
+          unloaded: "unloaded"
+        }
       },
       actions: {
         enable: "Enable",
@@ -78,11 +78,11 @@ const en = {
         unload: "Unload",
         use: "Use",
         close: "Close",
-        back: "Back",
+        back: "Back"
       },
       batch: {
         enabledAndLoadedSingle: "Enabled and loaded 1 module with dependencies.",
-        enabledAndLoadedMany: "Enabled and loaded {{count}} modules with dependencies.",
+        enabledAndLoadedMany: "Enabled and loaded {{count}} modules with dependencies."
       },
       errors: {
         loadCatalog: "Failed to load marketplace modules.",
@@ -94,7 +94,7 @@ const en = {
         missingEnabledInstance: "Enabled {{module}} but could not resolve active instance to load.",
         actionFailed: "Failed to {{action}} {{module}}@{{version}}.",
         runModuleAction: "Failed to run module action.",
-        loadModuleDetails: "Failed to load module details.",
+        loadModuleDetails: "Failed to load module details."
       },
       versionControls: {
         title: "Marketplace Version Controls",
@@ -104,16 +104,16 @@ const en = {
         dependenciesFor: "Dependencies for {{version}}",
         cycleSkipped: "{{module}} (cycle skipped)",
         noneSelected: "No module selected",
-        noneSelectedBody: "Select one or more modules to manage versions.",
+        noneSelectedBody: "Select one or more modules to manage versions."
       },
       modulePage: {
-        title: "Module page",
-      },
+        title: "Module page"
+      }
     },
     module: {
-      archived: "archived",
-    },
-  },
+      archived: "archived"
+    }
+  }
 };
 
 export default en;

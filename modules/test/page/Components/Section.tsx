@@ -3,7 +3,7 @@ import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 export const Section = ({
   title,
   description,
-  children,
+  children
 }: {
   title: string;
   description?: string;

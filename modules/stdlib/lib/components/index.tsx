@@ -5,47 +5,6 @@ import { FilterBox } from "../../src/webpack/ReactComponents.xpui.ts";
 import { ChipFilter } from "./ChipFilter.tsx";
 import Dropdown, { type DropdownOptions } from "./Dropdown.tsx";
 
-// Who doesn't love some Fixed Point (Functional) Programming?
-const Bluebird =
-  <A, B>(a: (b: B) => A) =>
-  <C,>(b: (c: C) => B) =>
-  (c: C) =>
-    a(b(c));
-
-const createStorage = (provider: Pick<Storage, "getItem" | "setItem">) => ({
-  getItem(key: string, def: () => any) {
-    const v = provider.getItem(key);
-    return JSON.parse(v!) ?? def();
-  },
-  setItem(key: string, value: any) {
-    const v = JSON.stringify(value);
-    provider.setItem(key, v);
-  },
-});
-
-type Thunk<A> = () => A;
-
-const usePersistedState =
-  ({ getItem, setItem }: ReturnType<typeof createStorage>) =>
-  <K extends string>(key: K) =>
-  <A,>(initialState: Thunk<A>) => {
-    const [state, setState] = React.useState<A>(() => getItem(key, initialState));
-
-    const persistentSetState = React.useCallback(
-      (reducer: (state: A) => A) => {
-        const nextState = reducer(state);
-
-        setItem(key, nextState);
-        setState(nextState);
-      },
-      [state, setItem, key],
-    );
-
-    return [state, persistentSetState] as const;
-  };
-
-const createPersistedState = Bluebird(usePersistedState)(createStorage);
-
 interface UseDropdownOpts<O extends DropdownOptions> {
   options: O;
   storage?: Storage;
@@ -55,30 +14,48 @@ interface UseDropdownOpts<O extends DropdownOptions> {
 export const useDropdown = <O extends DropdownOptions>({
   options,
   storage,
-  storageVariable,
+  storageVariable
 }: UseDropdownOpts<O>) => {
-  // We do this because we don't want the variable to change
   const [initialStorageVariable] = React.useState(storageVariable);
-  const getDefaultOption = () => Object.keys(options)[0] as typeof activeOption;
-  let activeOption: Extract<keyof typeof options, string>;
-  let setActiveOption: (reducer: (state: typeof activeOption) => typeof activeOption) => void;
-  if (storage && initialStorageVariable) {
-    [activeOption, setActiveOption] = createPersistedState(storage)(
-      `drop-down:${initialStorageVariable}`,
-    )<typeof activeOption>(getDefaultOption);
-  } else {
-    [activeOption, setActiveOption] = React.useState(getDefaultOption);
-  }
+  const getDefaultOption = () => Object.keys(options)[0] as Extract<keyof O, string>;
+  const [activeOption, setActiveOption] = React.useState(getDefaultOption);
+
+  React.useEffect(() => {
+    if (storage && initialStorageVariable) {
+      const stored = storage.getItem(`drop-down:${initialStorageVariable}`);
+      if (stored !== null) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (options[parsed as Extract<keyof O, string>]) {
+            setActiveOption(parsed as Extract<keyof O, string>);
+          }
+        } catch {}
+      }
+    }
+  }, [storage, initialStorageVariable, options]);
+
+  const setPersistedActiveOption = React.useCallback(
+    (reducer: (state: Extract<keyof O, string>) => Extract<keyof O, string>) => {
+      setActiveOption((prev) => {
+        const next = reducer(prev);
+        if (storage && initialStorageVariable) {
+          storage.setItem(`drop-down:${initialStorageVariable}`, JSON.stringify(next));
+        }
+        return next;
+      });
+    },
+    [storage, initialStorageVariable]
+  );
 
   const dropdown = (
     <Dropdown
       activeOption={activeOption}
-      onSwitch={(o) => setActiveOption(() => o)}
+      onSwitch={(o) => setPersistedActiveOption(() => o)}
       options={options}
     />
   );
 
-  return [dropdown, activeOption, setActiveOption] as const;
+  return [dropdown, activeOption, setPersistedActiveOption] as const;
 };
 
 export const getProp = (obj: any, path: string) => {
@@ -90,7 +67,7 @@ export const getProp = (obj: any, path: string) => {
 
 export const useSearchBar = ({
   placeholder,
-  expanded,
+  expanded
 }: {
   placeholder: string;
   expanded: boolean;
@@ -134,14 +111,14 @@ export const useChipFilter = (filters: Tree<React.ReactNode>) => {
             const prevSelectedFilter = selectedFilters.at(-1)!;
             const selectedFilter = {
               key: `${prevSelectedFilter.key}.${selectedFilterFullKeyPart}`,
-              filter: prevSelectedFilter.filter[selectedFilterFullKeyPart],
+              filter: prevSelectedFilter.filter[selectedFilterFullKeyPart]
             };
             selectedFilters.push(selectedFilter);
             return selectedFilters;
           },
-          [{ key: "", filter: filters }],
+          [{ key: "", filter: filters }]
         ),
-    [filters, selectedFilterFullKey],
+    [filters, selectedFilterFullKey]
   );
 
   const lastSelectedFilter = selectedFilters.at(-1)!;
@@ -160,7 +137,7 @@ export const useChipFilter = (filters: Tree<React.ReactNode>) => {
         setSelectedFilterFullKey(filter.key);
       }
     },
-    [selectedFilterFullKey],
+    [selectedFilterFullKey]
   );
   const treeNodeHasVal = (n: FilterOpt): n is RFilterOpt => !!n.filter[TreeNodeVal];
 

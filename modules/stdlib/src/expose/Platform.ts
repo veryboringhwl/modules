@@ -1,5 +1,6 @@
-import type { PlatformAutoGen } from "/hooks/PlatformAutoGen.d.ts";
 import { transformer } from "../../mixin.ts";
+
+import type { PlatformAutoGen } from "/hooks/PlatformAutoGen.d.ts";
 
 export type Platform = PlatformAutoGen;
 export let Platform: Platform;
@@ -8,16 +9,16 @@ transformer<Platform>(
   (emit) => (str) => {
     str = str.replace(
       /{(?=[^{}]*(?:{[^{}]*(?:{[^{}]*(?:{[^{}]*}[^{}]*)*}[^{}]*)*}[^{}]*)*(?<=[,{])version:)(?=[^{}]*(?:{[^{}]*(?:{[^{}]*(?:{[^{}]*}[^{}]*)*}[^{}]*)*}[^{}]*)*(?<=[,{])container:)/,
-      "__Platform={",
+      "__Platform={"
     );
     Object.defineProperty(globalThis, "__Platform", {
-      set: emit,
+      set: emit
     });
     return str;
   },
   {
-    glob: /^\/xpui-modules\.js/,
-  },
+    glob: /^\/xpui-modules\.js/
+  }
 ).then(($) => {
   Platform = $;
   const registry = $.getRegistry();
@@ -27,7 +28,7 @@ transformer<Platform>(
       continue;
     }
     Object.defineProperty(Platform, getter, {
-      get: () => () => registry.resolve(s),
+      get: () => () => registry.resolve(s)
     });
   }
 });

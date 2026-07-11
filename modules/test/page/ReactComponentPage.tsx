@@ -14,10 +14,12 @@ import {
   ScrollableContainer,
   Slider,
   Toggle,
-  Tooltip,
+  Tooltip
 } from "/modules/stdlib/src/webpack/ReactComponents.ts";
 import { usePanelStateMachine } from "/modules/stdlib/src/webpack/ReactHooks.ts";
 import { useCustomSnackbar, useSnackbar } from "/modules/stdlib/src/webpack/Snackbar.js";
+
+import { logger } from "../load.tsx";
 import { Card, type CardPropDoc } from "./Components/Card.tsx";
 import { Section } from "./Components/Section.tsx";
 
@@ -28,8 +30,8 @@ const menuProps: CardPropDoc[] = [
     name: "children",
     type: "React.ReactNode",
     required: true,
-    description: "MenuItem and nested submenus.",
-  },
+    description: "MenuItem and nested submenus."
+  }
 ];
 
 const contextMenuProps: CardPropDoc[] = [
@@ -37,22 +39,22 @@ const contextMenuProps: CardPropDoc[] = [
     name: "menu",
     type: "React.ReactNode",
     required: true,
-    description: "Menu content rendered on trigger.",
+    description: "Menu content rendered on trigger."
   },
   { name: "trigger", type: '"right-click" | "click"', defaultValue: '"right-click"' },
   { name: "placement", type: "string", defaultValue: '"top"' },
-  { name: "offset", type: "[number, number]" },
+  { name: "offset", type: "[number, number]" }
 ];
 
 const tooltipProps: CardPropDoc[] = [
   { name: "label", type: "string | React.ReactNode", required: true },
-  { name: "children", type: "React.ReactElement", required: true },
+  { name: "children", type: "React.ReactElement", required: true }
 ];
 
 const toggleProps: CardPropDoc[] = [
   { name: "id", type: "string", required: true },
   { name: "value", type: "boolean", required: true },
-  { name: "onSelected", type: "(value: boolean) => void", required: true },
+  { name: "onSelected", type: "(value: boolean) => void", required: true }
 ];
 
 const sliderProps: CardPropDoc[] = [
@@ -60,7 +62,7 @@ const sliderProps: CardPropDoc[] = [
   { name: "max", type: "number", defaultValue: "100" },
   { name: "value", type: "number", required: true },
   { name: "onDragMove", type: "(percentage: number) => void" },
-  { name: "onDragEnd", type: "(percentage: number) => void" },
+  { name: "onDragEnd", type: "(percentage: number) => void" }
 ];
 
 const confirmDialogProps: CardPropDoc[] = [
@@ -70,7 +72,7 @@ const confirmDialogProps: CardPropDoc[] = [
   { name: "confirmText", type: "string" },
   { name: "cancelText", type: "string" },
   { name: "onConfirm", type: "() => void", required: true },
-  { name: "onClose", type: "() => void", required: true },
+  { name: "onClose", type: "() => void", required: true }
 ];
 
 const dialogProps: CardPropDoc[] = [
@@ -78,7 +80,7 @@ const dialogProps: CardPropDoc[] = [
   { name: "onClose", type: "() => void", required: true },
   { name: "animated", type: "boolean", defaultValue: "true" },
   { name: "shouldCloseOnBackdropClick", type: "boolean", defaultValue: "true" },
-  { name: "children", type: "React.ReactNode", required: true },
+  { name: "children", type: "React.ReactNode", required: true }
 ];
 
 const scrollableProps: CardPropDoc[] = [
@@ -86,8 +88,8 @@ const scrollableProps: CardPropDoc[] = [
     name: "children",
     type: "React.ReactNode",
     required: true,
-    description: "Scrollable horizontal/overflow content.",
-  },
+    description: "Scrollable horizontal/overflow content."
+  }
 ];
 
 const cardsProps: CardPropDoc[] = [
@@ -95,29 +97,29 @@ const cardsProps: CardPropDoc[] = [
     name: "Cards.Generic",
     type: "component",
     required: true,
-    description: "Generic card shell with image/title/subheader slots.",
+    description: "Generic card shell with image/title/subheader slots."
   },
   {
     name: "Cards.HeroGeneric",
     type: "component",
     required: true,
-    description: "Hero variant with signifier region.",
+    description: "Hero variant with signifier region."
   },
   { name: "uri", type: "string", required: true },
   { name: "isPlayable", type: "boolean", defaultValue: "false" },
-  { name: "renderCardImage", type: "() => React.ReactNode" },
+  { name: "renderCardImage", type: "() => React.ReactNode" }
 ];
 
 const routesProps: CardPropDoc[] = [
   { name: "Routes", type: "container", required: true },
   { name: "Route.path", type: "string", required: true },
-  { name: "Route.element", type: "React.ReactElement", required: true },
+  { name: "Route.element", type: "React.ReactElement", required: true }
 ];
 
 const navToProps: CardPropDoc[] = [
   { name: "to", type: "string", required: true },
   { name: "replace", type: "boolean", defaultValue: "false" },
-  { name: "children", type: "React.ReactNode" },
+  { name: "children", type: "React.ReactNode" }
 ];
 
 const ToggleDemo = () => {
@@ -145,7 +147,7 @@ const SliderDemo = () => {
     <Slider
       labelText="Volume Level"
       max={max}
-      onDragEnd={(percentage: number) => console.log("Final value:", percentage * max)}
+      onDragEnd={(percentage: number) => logger.log("Final value:", percentage * max)}
       onDragMove={(percentage: number) => setValue(percentage * max)}
       value={value}
     />
@@ -164,7 +166,7 @@ const ConfirmDialogDemo = () => {
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onConfirm={() => {
-          console.log("Confirmed!");
+          logger.log("Confirmed!");
           setIsOpen(false);
         }}
         onOutside={() => setIsOpen(false)}
@@ -235,9 +237,9 @@ export const ReactComponentPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { enqueueCustomSnackbar } = useCustomSnackbar();
   const [panelState, panelService, panelMachine] = usePanelStateMachine();
-  console.log("panelState", panelState);
-  console.log("panelService", panelService);
-  console.log("panelMachine", panelMachine);
+  logger.log("panelState", panelState);
+  logger.log("panelService", panelService);
+  logger.log("panelMachine", panelMachine);
 
   return (
     <div className="test-showcase-page test-showcase-page--react">
@@ -248,7 +250,7 @@ export const ReactComponentPage = () => {
         <Card
           props={[
             { name: "Preview", type: "Live component output", required: true },
-            { name: "Props", type: "name + type + notes", required: true },
+            { name: "Props", type: "name + type + notes", required: true }
           ]}
           subtitle="Each card has a live preview and a typed props block for quick copy/paste usage."
           title="How to use this page"
@@ -303,7 +305,7 @@ export const ReactComponentPage = () => {
           {React.createElement(
             NavTo as React.ElementType,
             { to: "/home", replace: true },
-            "Go to /home",
+            "Go to /home"
           )}
         </Card>
 
@@ -382,8 +384,8 @@ export const ReactComponentPage = () => {
                 {
                   identifier: "my-unique-toast-id",
                   autoHideDuration: 3000,
-                  anchorOrigin: { vertical: "top", horizontal: "right" },
-                },
+                  anchorOrigin: { vertical: "top", horizontal: "right" }
+                }
               );
             }}
             type="button"
@@ -401,7 +403,7 @@ export const ReactComponentPage = () => {
           <Cards.Generic
             headerText="Default Generic Card"
             isPlayable={true}
-            onClick={(uri: string) => console.log("Clicked card:", uri)}
+            onClick={(uri: string) => logger.log("Clicked card:", uri)}
             renderCardImage={() => (
               <img className="test-demo-img-cover" src="https://placehold.co/100" />
             )}

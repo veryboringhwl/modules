@@ -1,4 +1,5 @@
 import { React } from "/modules/stdlib/src/expose/React.ts";
+
 import { t } from "../../../shared/i18n.ts";
 // import { enqueueSnackbar } from "/modules/stdlib/src/webpack/Snackbar.ts";
 import {
@@ -8,8 +9,9 @@ import {
   getPrimaryAction,
   getRuntimeAction,
   getSecondaryAction,
-  loadMarketplaceCatalog,
+  loadMarketplaceCatalog
 } from "../services/catalogService.ts";
+
 import type { MarketplaceActionKind, MarketplaceCatalogItem } from "../types.ts";
 
 const getActionKey = (item: MarketplaceCatalogItem) => {
@@ -61,7 +63,7 @@ export const useMarketplaceCatalog = () => {
         }
 
         const preferredInstance = item.instances.find(
-          (instance) => instance.getVersion() === preferredVersion,
+          (instance) => instance.getVersion() === preferredVersion
         );
         if (!preferredInstance) {
           return item;
@@ -71,11 +73,11 @@ export const useMarketplaceCatalog = () => {
           ...item,
           instance: preferredInstance,
           metadata: preferredInstance.metadata,
-          version: preferredInstance.getVersion(),
+          version: preferredInstance.getVersion()
         };
       });
     },
-    [preferredVersionsByIdentifier],
+    [preferredVersionsByIdentifier]
   );
 
   const refresh = React.useCallback(async () => {
@@ -121,7 +123,7 @@ export const useMarketplaceCatalog = () => {
           const message = t("marketplace.errors.actionFailed", {
             action: getActionLabel(actionKind) || actionKind,
             module: item.identifier,
-            version: item.version,
+            version: item.version
           });
           setErrorMessage(message);
           return;
@@ -135,19 +137,19 @@ export const useMarketplaceCatalog = () => {
             : t("marketplace.errors.actionFailed", {
                 action: getActionLabel(actionKind) || actionKind,
                 module: item.identifier,
-                version: item.version,
+                version: item.version
               });
         setErrorMessage(message);
       } finally {
         setPendingActionKey(null);
       }
     },
-    [refresh],
+    [refresh]
   );
 
   const isActionPending = React.useCallback(
     (item: MarketplaceCatalogItem) => pendingActionKey === getActionKey(item),
-    [pendingActionKey],
+    [pendingActionKey]
   );
 
   const selectedItems = React.useMemo(() => {
@@ -157,7 +159,7 @@ export const useMarketplaceCatalog = () => {
 
   const isSelected = React.useCallback(
     (item: MarketplaceCatalogItem) => selectedKeys.includes(getCatalogKey(item)),
-    [selectedKeys],
+    [selectedKeys]
   );
 
   const toggleSelected = React.useCallback((item: MarketplaceCatalogItem) => {
@@ -209,7 +211,7 @@ export const useMarketplaceCatalog = () => {
 
     setPreferredVersionsByIdentifier((current) => ({
       ...current,
-      [item.identifier]: version,
+      [item.identifier]: version
     }));
 
     setItems((currentItems) =>
@@ -222,9 +224,9 @@ export const useMarketplaceCatalog = () => {
           ...currentItem,
           instance: selectedInstance,
           metadata: selectedInstance.metadata,
-          version: selectedInstance.getVersion(),
+          version: selectedInstance.getVersion()
         };
-      }),
+      })
     );
 
     if (selectedInstance.metadata) {
@@ -248,9 +250,9 @@ export const useMarketplaceCatalog = () => {
 
         return {
           ...currentItem,
-          metadata: selectedInstance.metadata,
+          metadata: selectedInstance.metadata
         };
-      }),
+      })
     );
   }, []);
 
@@ -275,7 +277,7 @@ export const useMarketplaceCatalog = () => {
       setBatchMessage(
         enabledCount === 1
           ? t("marketplace.batch.enabledAndLoadedSingle")
-          : t("marketplace.batch.enabledAndLoadedMany", { count: enabledCount }),
+          : t("marketplace.batch.enabledAndLoadedMany", { count: enabledCount })
       );
 
       await refresh();
@@ -308,6 +310,6 @@ export const useMarketplaceCatalog = () => {
     enableSelected,
     isBatchEnabling,
     batchError,
-    batchMessage,
+    batchMessage
   };
 };

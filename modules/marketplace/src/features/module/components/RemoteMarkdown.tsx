@@ -1,6 +1,7 @@
 import { proxy } from "/hooks/util/proxy.ts";
 import { React, ReactDOM } from "/modules/stdlib/src/expose/React.ts";
 import { useQuery } from "/modules/stdlib/src/webpack/ReactQuery.ts";
+
 import { t } from "../../../shared/i18n.ts";
 import { renderMarkdown } from "../services/markdownService.ts";
 
@@ -25,7 +26,7 @@ const ShadowRoot = ({ mode, delegatesFocus, styleSheets, children }: ShadowRootP
 
     const shadow = node.current.attachShadow({
       mode,
-      delegatesFocus,
+      delegatesFocus
     });
 
     if (styleSheets.length > 0) {
@@ -43,7 +44,7 @@ const ShadowRoot = ({ mode, delegatesFocus, styleSheets, children }: ShadowRootP
 
 export const RemoteMarkdown = ({
   url,
-  emptyText = t("marketplace.state.noReadme"),
+  emptyText = t("marketplace.state.noReadme")
 }: {
   url?: string;
   emptyText?: string;
@@ -65,7 +66,7 @@ export const RemoteMarkdown = ({
       const markdown = await fetch(request).then((response) => response.text());
       return await renderMarkdown(markdown);
     },
-    enabled: !!url,
+    enabled: !!url
   });
 
   if (!url) {

@@ -1,8 +1,9 @@
-import type { React } from "../src/expose/React.ts";
 import RootRegistry from "../src/registers/root.ts";
 import { UI } from "../src/webpack/ComponentLibrary.ts";
 import { Locale } from "../src/webpack/misc.ts";
 import { Dialog } from "../src/webpack/ReactComponents.ts";
+
+import type { React } from "../src/expose/React.ts";
 
 const [RootChildrenRegistry] = RootRegistry;
 
@@ -12,7 +13,7 @@ export function display({
   title,
   content,
   isLarge,
-  template = true,
+  template = true
 }: {
   title: string;
   content: React.ReactElement;

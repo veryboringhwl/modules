@@ -1,7 +1,10 @@
-import type { React } from "/modules/stdlib/src/expose/React.ts";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+
+import { logger } from "../load.tsx";
 import { Card, type CardPropDoc } from "./Components/Card.tsx";
 import { Section } from "./Components/Section.tsx";
+
+import type { React } from "/modules/stdlib/src/expose/React.ts";
 
 const Icon = (props: React.ComponentProps<typeof UI.Icon>) => (
   <UI.Icon {...props} viewBox="0 0 24 24">
@@ -21,20 +24,20 @@ const buttonProps: CardPropDoc[] = [
   { name: "size", type: '"small" | "medium" | "large"', defaultValue: '"medium"' },
   { name: "iconOnly", type: "React.ElementType" },
   { name: "onClick", type: "() => void" },
-  { name: "aria-label", type: "string", required: true },
+  { name: "aria-label", type: "string", required: true }
 ];
 
 const formInputProps: CardPropDoc[] = [
   { name: "placeholder", type: "string" },
   { name: "error", type: "boolean", defaultValue: "false" },
-  { name: "size", type: '"small" | "medium" | "large"', defaultValue: '"medium"' },
+  { name: "size", type: '"small" | "medium" | "large"', defaultValue: '"medium"' }
 ];
 
 const textProps: CardPropDoc[] = [
   { name: "variant", type: "string", defaultValue: '"bodyMedium"' },
   { name: "semanticColor", type: "string" },
   { name: "lineClamp", type: "number" },
-  { name: "as", type: "React.ElementType" },
+  { name: "as", type: "React.ElementType" }
 ];
 
 const listRowProps: CardPropDoc[] = [
@@ -43,20 +46,20 @@ const listRowProps: CardPropDoc[] = [
   { name: "subtitle", type: "React.ReactNode" },
   { name: "media", type: "string" },
   { name: "trailing", type: "React.ReactNode" },
-  { name: "onClick", type: "(e: React.MouseEvent) => void" },
+  { name: "onClick", type: "(e: React.MouseEvent) => void" }
 ];
 
 const iconProps: CardPropDoc[] = [
   { name: "size", type: '"xsmall" | "small" | "medium" | "large" | "xlarge"' },
   { name: "semanticColor", type: "string" },
-  { name: "viewBox", type: "string" },
+  { name: "viewBox", type: "string" }
 ];
 
 const popoverProps: CardPropDoc[] = [
   { name: "popoverTitle", type: "string" },
   { name: "arrow", type: '"top" | "bottom" | "left" | "right"' },
   { name: "onClose", type: "() => void" },
-  { name: "children", type: "React.ReactNode", required: true },
+  { name: "children", type: "React.ReactNode", required: true }
 ];
 
 export const EncoreComponentPage = () => {
@@ -83,7 +86,7 @@ export const EncoreComponentPage = () => {
           props={[
             { name: "padding", type: "string | number" },
             { name: "borderRadius", type: "string" },
-            { name: "isInteractive", type: "boolean" },
+            { name: "isInteractive", type: "boolean" }
           ]}
           title="UI.Box"
         >
@@ -108,7 +111,7 @@ export const EncoreComponentPage = () => {
           <UI.ButtonPrimary
             aria-label="Add to cart"
             iconOnly={Icon}
-            onClick={() => console.log("Clicked!")}
+            onClick={() => logger.log("Clicked!")}
             size="large"
           />
         </Card>
@@ -116,7 +119,7 @@ export const EncoreComponentPage = () => {
           <UI.ButtonSecondary
             aria-label="Add to cart"
             iconOnly={Icon}
-            onClick={() => console.log("Clicked!")}
+            onClick={() => logger.log("Clicked!")}
             size="large"
           />
         </Card>
@@ -124,7 +127,7 @@ export const EncoreComponentPage = () => {
           <UI.ButtonTertiary
             aria-label="Add to cart"
             iconOnly={Icon}
-            onClick={() => console.log("Clicked!")}
+            onClick={() => logger.log("Clicked!")}
             size="large"
           />
         </Card>
@@ -141,14 +144,14 @@ export const EncoreComponentPage = () => {
             { name: "media", type: "string | React.ReactNode" },
             { name: "size", type: '"sm" | "md"' },
             { name: "onClick", type: "(e: React.MouseEvent) => void" },
-            { name: "disabled", type: "boolean" },
+            { name: "disabled", type: "boolean" }
           ]}
           title="UI.Card details"
         >
           <UI.Card
             id="card-probe"
             media={<div>Media stuff</div>}
-            onClick={() => console.log("Card clicked")}
+            onClick={() => logger.log("Row Clicked")}
             pretitle="Card Pretitle"
             subtitle="Card Subtitle"
             title="Card Title"
@@ -168,13 +171,13 @@ export const EncoreComponentPage = () => {
             { name: "media", type: "string | React.ReactNode" },
             { name: "size", type: '"sm" | "md"' },
             { name: "onClick", type: "(e: React.MouseEvent) => void" },
-            { name: "disabled", type: "boolean" },
+            { name: "disabled", type: "boolean" }
           ]}
           title="UI.Chip details"
         >
           <UI.Chip
             index={0}
-            onClick={() => console.log("Chip clicked")}
+            onClick={() => logger.log("Chip clicked")}
             secondary={true}
             selected={false}
             selectedColorSet="invertedLight"
@@ -186,8 +189,7 @@ export const EncoreComponentPage = () => {
           </UI.Chip>
           <UI.Chip
             index={1}
-            onClick={() => console.log("Chip clicked")}
-            onClick={() => console.log("Chip clicked")}
+            onClick={() => logger.log("Chip clicked")}
             secondary={false}
             selected={true}
             selectedColorSet="invertedLight"
@@ -224,17 +226,13 @@ export const EncoreComponentPage = () => {
               title="List Row Title"
               trailing={<UI.ButtonTertiary size="small">Action</UI.ButtonTertiary>}
             />
-            <UI.ListRow
-              id="row-2"
-              onClick={() => console.log("Row Clicked")}
-              title="Interactive Row"
-            />
+            <UI.ListRow id="row-2" onClick={() => {}} title="Interactive Row" />
           </UI.List>
         </Card>
         <Card
           props={[
             { name: "condensed", type: "boolean" },
-            { name: "children", type: "React.ReactNode" },
+            { name: "children", type: "React.ReactNode" }
           ]}
           title="UI.TypeList + UI.VisuallyHidden"
         >
@@ -286,7 +284,7 @@ export const EncoreComponentPage = () => {
           props={[
             { name: "iconLeading", type: "React.ReactElement" },
             { name: "iconTrailing", type: "React.ReactElement" },
-            { name: "children", type: "React.ReactNode", required: true },
+            { name: "children", type: "React.ReactNode", required: true }
           ]}
           title="UI.FormInputIcon"
         >
@@ -316,7 +314,7 @@ export const EncoreComponentPage = () => {
           <div className="test-demo-popover-wrap">
             <UI.Popover
               arrow="bottom"
-              onClose={() => console.log("Close clicked")}
+              onClose={() => logger.log("Close clicked")}
               popoverTitle="Popover Probe"
             >
               <UI.Box padding="base">This is the internal content of the Popover component.</UI.Box>
@@ -328,7 +326,7 @@ export const EncoreComponentPage = () => {
           props={[
             { name: "size", type: "string" },
             { name: "variant", type: "string" },
-            { name: "useBrandColor", type: "boolean" },
+            { name: "useBrandColor", type: "boolean" }
           ]}
           title="UI.Progress + UI.LogoSpotify"
         >

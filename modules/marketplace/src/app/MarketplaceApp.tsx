@@ -1,4 +1,5 @@
 import { Route, Routes } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
 import { MarketplacePage } from "../features/catalog/components/MarketplacePage.tsx";
 import { ModulePage } from "../features/module/components/ModulePage.tsx";
 

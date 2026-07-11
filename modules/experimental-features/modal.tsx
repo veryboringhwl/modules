@@ -2,6 +2,8 @@ import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.xpui.ts";
 
+import { logger } from "./load.tsx";
+
 // this entire thing is ai generated
 // hope it works
 
@@ -79,7 +81,7 @@ const PropertyRow = ({ property, onOverride }) => {
     <div
       style={{
         ...styles.row,
-        backgroundColor: isOverridden ? "rgba(255, 255, 255, 0.05)" : "transparent",
+        backgroundColor: isOverridden ? "rgba(255, 255, 255, 0.05)" : "transparent"
       }}
     >
       <div style={styles.colMain}>
@@ -119,7 +121,7 @@ export const Menu = ({ onClose }) => {
       const props = await RemoteConfigDebugAPI.getProperties();
       setProperties(props || []);
     } catch (err) {
-      console.error("Failed to fetch Remote Config Properties:", err);
+      logger.error("Failed to fetch Remote Config Properties:", err);
     }
   };
 
@@ -139,7 +141,7 @@ export const Menu = ({ onClose }) => {
 
       await loadProperties(); // Refresh UI to reflect changes
     } catch (err) {
-      console.error(`Failed to override ${property.name}:`, err);
+      logger.error(`Failed to override ${property.name}:`, err);
     }
   };
 
@@ -149,7 +151,7 @@ export const Menu = ({ onClose }) => {
       setNeedsRestart(true);
       await loadProperties();
     } catch (err) {
-      console.error("Failed to clear overrides:", err);
+      logger.error("Failed to clear overrides:", err);
     }
   };
 
@@ -169,7 +171,7 @@ export const Menu = ({ onClose }) => {
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.description?.toLowerCase().includes(q) ||
-          p.component?.toLowerCase().includes(q),
+          p.component?.toLowerCase().includes(q)
       );
     }
 
@@ -285,31 +287,31 @@ const styles = {
     flexDirection: "column",
     backgroundColor: "var(--background-base, #121212)",
     borderRadius: "8px",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   header: {
     padding: "16px 24px",
     borderBottom: "1px solid rgba(255,255,255,0.1)",
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "center"
   },
   closeBtn: {
     background: "transparent",
     border: "none",
     color: "var(--text-subdued)",
-    cursor: "pointer",
+    cursor: "pointer"
   },
   toolbar: {
     display: "flex",
     padding: "16px 24px",
     gap: "12px",
     alignItems: "center",
-    borderBottom: "1px solid rgba(255,255,255,0.05)",
+    borderBottom: "1px solid rgba(255,255,255,0.05)"
   },
   chipContainer: {
     display: "flex",
-    gap: "8px",
+    gap: "8px"
   },
   searchInput: {
     flex: 1,
@@ -318,7 +320,7 @@ const styles = {
     background: "rgba(255,255,255,0.1)",
     border: "none",
     color: "var(--text-base)",
-    fontSize: "14px",
+    fontSize: "14px"
   },
   clearBtn: {
     padding: "8px 16px",
@@ -328,7 +330,7 @@ const styles = {
     color: "var(--text-base)",
     cursor: "pointer",
     fontSize: "13px",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   warningBanner: {
     backgroundColor: "rgba(233, 20, 41, 0.2)",
@@ -336,7 +338,7 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    color: "#f15e6c",
+    color: "#f15e6c"
   },
   reloadBtn: {
     background: "#f15e6c",
@@ -345,42 +347,42 @@ const styles = {
     padding: "4px 12px",
     borderRadius: "4px",
     cursor: "pointer",
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   content: {
     flex: 1,
     display: "flex",
     flexDirection: "column",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   tableHeader: {
     display: "flex",
     padding: "8px 24px",
     borderBottom: "1px solid rgba(255,255,255,0.1)",
-    backgroundColor: "rgba(0,0,0,0.2)",
+    backgroundColor: "rgba(0,0,0,0.2)"
   },
   list: {
     flex: 1,
     overflowY: "auto",
-    padding: "0 12px",
+    padding: "0 12px"
   },
   row: {
     display: "flex",
     padding: "12px 12px",
     borderBottom: "1px solid rgba(255,255,255,0.05)",
     alignItems: "center",
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   colMain: {
     flex: 1,
-    paddingRight: "16px",
+    paddingRight: "16px"
   },
   colValue: {
     width: "150px",
-    paddingRight: "16px",
+    paddingRight: "16px"
   },
   colControl: {
-    width: "150px",
+    width: "150px"
   },
   select: {
     width: "100%",
@@ -388,7 +390,7 @@ const styles = {
     background: "rgba(255,255,255,0.1)",
     color: "white",
     border: "none",
-    borderRadius: "4px",
+    borderRadius: "4px"
   },
   input: {
     width: "100%",
@@ -396,6 +398,6 @@ const styles = {
     background: "rgba(255,255,255,0.1)",
     color: "white",
     border: "none",
-    borderRadius: "4px",
-  },
+    borderRadius: "4px"
+  }
 };

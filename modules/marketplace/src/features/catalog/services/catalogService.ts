@@ -1,17 +1,19 @@
 import { loadRemoteModules, type Module, type ModuleInstance, RootModule } from "/hooks/module.ts";
 import { compare, parse } from "/hooks/std/semver.ts";
+
 import { t } from "../../../shared/i18n.ts";
+import {
+  flattenDependencyTrees,
+  getEnabledDependencies,
+  getInstanceGeneratorsDependencyCandidates
+} from "./dependencyGraph.ts";
+
 import type {
   MarketplaceActionDescriptor,
   MarketplaceActionKind,
   MarketplaceBatchResult,
-  MarketplaceCatalogItem,
+  MarketplaceCatalogItem
 } from "../types.ts";
-import {
-  flattenDependencyTrees,
-  getEnabledDependencies,
-  getInstanceGeneratorsDependencyCandidates,
-} from "./dependencyGraph.ts";
 
 let remoteCatalogPromise: Promise<void> | null = null;
 
@@ -21,7 +23,7 @@ const compareVersionsDesc = (leftVersion: string, rightVersion: string) => {
   } catch {
     return rightVersion.localeCompare(leftVersion, undefined, {
       numeric: true,
-      sensitivity: "base",
+      sensitivity: "base"
     });
   }
 };
@@ -57,7 +59,7 @@ const sortInstancesByPreference = (instances: ModuleInstance[]) => {
 
 const selectDisplayInstance = (
   module: Module,
-  instances: ModuleInstance[],
+  instances: ModuleInstance[]
 ): ModuleInstance | null => {
   const enabled = module.getEnabledInstance();
   if (enabled) {
@@ -92,7 +94,7 @@ export const getCatalogKey = (item: Pick<MarketplaceCatalogItem, "identifier" | 
   `${item.identifier}@${item.version}`;
 
 const resolveEnablePlan = async (
-  selectedItems: MarketplaceCatalogItem[],
+  selectedItems: MarketplaceCatalogItem[]
 ): Promise<ModuleInstance[]> => {
   const enabledDependencies = getEnabledDependencies();
   for (const item of selectedItems) {
@@ -102,12 +104,12 @@ const resolveEnablePlan = async (
   const selectedInstanceGenerators = selectedItems.map((item) =>
     (async function* () {
       yield item.instance;
-    })(),
+    })()
   );
 
   for await (const candidate of getInstanceGeneratorsDependencyCandidates(
     selectedInstanceGenerators,
-    enabledDependencies,
+    enabledDependencies
   )) {
     return flattenDependencyTrees(candidate);
   }
@@ -116,7 +118,7 @@ const resolveEnablePlan = async (
 };
 
 export const enableItemsWithDependencies = async (
-  selectedItems: MarketplaceCatalogItem[],
+  selectedItems: MarketplaceCatalogItem[]
 ): Promise<MarketplaceBatchResult> => {
   if (!selectedItems.length) {
     return { ok: true, enabledCount: 0 };
@@ -128,7 +130,7 @@ export const enableItemsWithDependencies = async (
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : t("marketplace.errors.resolveDependency"),
+      error: error instanceof Error ? error.message : t("marketplace.errors.resolveDependency")
     };
   }
 
@@ -141,9 +143,9 @@ export const enableItemsWithDependencies = async (
         return {
           ok: false,
           error: t("marketplace.errors.installFailed", {
-            module: instance.getIdentifier(),
+            module: instance.getIdentifier()
           }),
-          enabledCount,
+          enabledCount
         };
       }
     }
@@ -158,9 +160,9 @@ export const enableItemsWithDependencies = async (
       return {
         ok: false,
         error: t("marketplace.errors.enableFailed", {
-          module: instance.getIdentifier(),
+          module: instance.getIdentifier()
         }),
-        enabledCount,
+        enabledCount
       };
     }
 
@@ -175,9 +177,9 @@ export const enableItemsWithDependencies = async (
       return {
         ok: false,
         error: t("marketplace.errors.missingEnabledInstance", {
-          module: item.identifier,
+          module: item.identifier
         }),
-        enabledCount,
+        enabledCount
       };
     }
 
@@ -190,9 +192,9 @@ export const enableItemsWithDependencies = async (
       return {
         ok: false,
         error: t("marketplace.errors.loadAfterEnableFailed", {
-          module: item.identifier,
+          module: item.identifier
         }),
-        enabledCount,
+        enabledCount
       };
     }
   }
@@ -220,7 +222,7 @@ export const loadMarketplaceCatalog = async (): Promise<MarketplaceCatalogItem[]
         instance,
         instances,
         metadata: instance.metadata,
-        version: instance.getVersion(),
+        version: instance.getVersion()
       } as MarketplaceCatalogItem;
     })
     .filter((item): item is MarketplaceCatalogItem => item !== null);
@@ -231,11 +233,11 @@ export const loadMarketplaceCatalog = async (): Promise<MarketplaceCatalogItem[]
     .map((item) => ({
       ...item,
       metadata: item.instance.metadata,
-      version: item.instance.getVersion(),
+      version: item.instance.getVersion()
     }))
     .sort((left, right) => {
       const nameCmp = displayName(left).localeCompare(displayName(right), undefined, {
-        sensitivity: "base",
+        sensitivity: "base"
       });
       if (nameCmp !== 0) {
         return nameCmp;
@@ -258,7 +260,7 @@ export const getPrimaryAction = (item: MarketplaceCatalogItem): MarketplaceActio
 };
 
 export const getSecondaryAction = (
-  item: MarketplaceCatalogItem,
+  item: MarketplaceCatalogItem
 ): MarketplaceActionDescriptor | null => {
   if (item.instance.isInstalled()) {
     return { kind: "delete", label: t("marketplace.actions.uninstall") };
@@ -272,7 +274,7 @@ export const getSecondaryAction = (
 };
 
 export const getRuntimeAction = (
-  item: MarketplaceCatalogItem,
+  item: MarketplaceCatalogItem
 ): MarketplaceActionDescriptor | null => {
   if (!item.instance.isInstalled() || !item.instance.isEnabled()) {
     return null;
@@ -282,14 +284,14 @@ export const getRuntimeAction = (
     return {
       kind: "unload",
       label: t("marketplace.actions.unload"),
-      disabled: !item.instance.canUnload(),
+      disabled: !item.instance.canUnload()
     };
   }
 
   return {
     kind: "load",
     label: t("marketplace.actions.load"),
-    disabled: !item.instance.canLoad(),
+    disabled: !item.instance.canLoad()
   };
 };
 
@@ -344,7 +346,7 @@ const deleteInstance = async (item: MarketplaceCatalogItem): Promise<boolean> =>
 
 export const executeMarketplaceAction = async (
   item: MarketplaceCatalogItem,
-  actionKind: MarketplaceActionKind,
+  actionKind: MarketplaceActionKind
 ): Promise<boolean> => {
   switch (actionKind) {
     case "add": {

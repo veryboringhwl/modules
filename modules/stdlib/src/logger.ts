@@ -12,6 +12,6 @@ export const createLogger = (mod: ModuleInstance) => {
       }
 
       return func;
-    },
+    }
   });
 };

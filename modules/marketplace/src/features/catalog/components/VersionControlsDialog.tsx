@@ -1,7 +1,9 @@
 import { compare, parse, parseRange, satisfies } from "/hooks/std/semver.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { Dialog } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
 import { t } from "../../../shared/i18n.ts";
+
 import type { MarketplaceActionKind, MarketplaceCatalogItem } from "../types.ts";
 
 const compareVersionsDesc = (leftVersion: string, rightVersion: string) => {
@@ -10,19 +12,19 @@ const compareVersionsDesc = (leftVersion: string, rightVersion: string) => {
   } catch {
     return rightVersion.localeCompare(leftVersion, undefined, {
       numeric: true,
-      sensitivity: "base",
+      sensitivity: "base"
     });
   }
 };
 
 const createVersionItem = (
   base: MarketplaceCatalogItem,
-  instance: MarketplaceCatalogItem["instance"],
+  instance: MarketplaceCatalogItem["instance"]
 ): MarketplaceCatalogItem => ({
   ...base,
   instance,
   metadata: instance.metadata,
-  version: instance.getVersion(),
+  version: instance.getVersion()
 });
 
 const buildSelectedMap = (selectedItems: MarketplaceCatalogItem[]) => {
@@ -50,21 +52,21 @@ export const VersionControlsDialog = ({
   onSelectVersion,
   onEnableSelected,
   isActionPending,
-  isBatchEnabling,
+  isBatchEnabling
 }: VersionControlsDialogProps) => {
   const itemsByIdentifier = React.useMemo(
     () => Object.fromEntries(items.map((item) => [item.identifier, item])),
-    [items],
+    [items]
   );
 
   const selectedByIdentifier = React.useMemo(
     () => buildSelectedMap(selectedItems),
-    [selectedItems],
+    [selectedItems]
   );
 
   const selectedIdentifiers = React.useMemo(
     () => Array.from(new Set(selectedItems.map((item) => item.identifier))),
-    [selectedItems],
+    [selectedItems]
   );
 
   return (
@@ -87,7 +89,7 @@ export const VersionControlsDialog = ({
                 ? t("marketplace.selection.enabling")
                 : selectedIdentifiers.length > 0
                   ? t("marketplace.selection.enableSelectedCount", {
-                      count: selectedIdentifiers.length,
+                      count: selectedIdentifiers.length
                     })
                   : t("marketplace.selection.enableSelected")}
             </button>
@@ -141,7 +143,7 @@ const ModuleSection = ({
   onRunAction,
   onSelectVersion,
   isActionPending,
-  path,
+  path
 }: ModuleSectionProps) => {
   const baseItem = itemsByIdentifier[identifier];
   const selectedItem = selectedByIdentifier[identifier] ?? baseItem;
@@ -174,7 +176,7 @@ const ModuleSection = ({
         .map((instance) =>
           instance.ensureMetadata().catch(() => {
             return null;
-          }),
+          })
         );
 
       if (!pending.length) {
@@ -272,7 +274,7 @@ const ModuleSection = ({
                 <div className="mkp-version-deps" key={`deps-${identifier}@${item.version}`}>
                   <p className="mkp-version-deps__title">
                     {t("marketplace.versionControls.dependenciesFor", {
-                      version: item.version,
+                      version: item.version
                     })}
                   </p>
 
@@ -284,7 +286,7 @@ const ModuleSection = ({
                           key={`${identifier}-${dependencyIdentifier}`}
                         >
                           {t("marketplace.versionControls.cycleSkipped", {
-                            module: dependencyIdentifier,
+                            module: dependencyIdentifier
                           })}
                         </div>
                       );
@@ -326,7 +328,7 @@ const VersionRow = ({
   isCurrent,
   isActionPending,
   onRunAction,
-  onSelectVersion,
+  onSelectVersion
 }: VersionRowProps) => {
   const { instance } = item;
   const canRunLoadToggle = instance.isLoaded() ? instance.canUnload() : instance.canLoad();

@@ -1,7 +1,7 @@
 import {
   PanelContainer,
   PanelContent,
-  PanelHeader,
+  PanelHeader
 } from "/modules/stdlib/src/webpack/ReactComponents.ts";
 
 export function TestPanel() {

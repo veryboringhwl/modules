@@ -15,13 +15,13 @@ transformer(
 
     str = str.replace(
       /(\(0,l\.jsx\)\([a-zA-Z_$][\w$]*,{restartContainer:[^}]+}\),\s*\(0,l\.jsx\)\([a-zA-Z_$][\w$]*,{}\))\]/,
-      "$1,...__renderSettingSections()]",
+      "$1,...__renderSettingSections()]"
     );
 
     return str;
   },
   {
     wait: false,
-    glob: /^\/xpui-routes-desktop-settings\.js/,
-  },
+    glob: /^\/xpui-routes-desktop-settings\.js/
+  }
 );

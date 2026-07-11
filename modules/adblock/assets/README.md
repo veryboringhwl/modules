@@ -4,6 +4,7 @@ Stream Spotify music without interruptions — block ads and unlock premium-like
 
 > [!NOTE]
 > Enabled features include:
+>
 > - No forced shuffle
 > - No forced repeat
 > - Modifiable queue
@@ -12,6 +13,7 @@ Stream Spotify music without interruptions — block ads and unlock premium-like
 
 > [!CAUTION]
 > This module **will not**:
+>
 > - Unlock native lyrics page
 > - Let you download songs
 > - Allow changing song quality to `Very High`

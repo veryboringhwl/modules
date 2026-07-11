@@ -8,7 +8,7 @@ export default async function (transformer: Transformer) {
       return str;
     },
     {
-      glob: /^\/xpui-modules\.js$/,
-    },
+      glob: /^\/xpui-modules\.js$/
+    }
   );
 }

@@ -28,22 +28,22 @@ globalThis.__renderNowPlayingBarButtons = () => [
   React.createElement(() => {
     [, refresh] = React.useReducer((n) => n + 1, 0);
     return <>{registry.all()}</>;
-  }),
+  })
 ];
 
 transformer(
   (emit) => (str) => {
     str = str.replace(
       /(desktop-npb-extra\.queueButton[\s\S]*?children:\s*\[)/,
-      "$1...__renderNowPlayingBarButtons(),",
+      "$1...__renderNowPlayingBarButtons(),"
     );
 
     emit();
     return str;
   },
   {
-    glob: /^\/dwp-now-playing-bar\.js/,
-  },
+    glob: /^\/dwp-now-playing-bar\.js/
+  }
 );
 
 export type PlaybarButtonProps = {
@@ -60,7 +60,7 @@ export const PlaybarButton = ({
   isActiveNoIndicator = false,
   disabled = false,
   icon,
-  onClick,
+  onClick
 }: PlaybarButtonProps) => {
   return (
     <Tooltip label={label}>
@@ -69,7 +69,7 @@ export const PlaybarButton = ({
         aria-pressed={isActive}
         className={classnames(MAP.main.playbar.buttons.button.wrapper, {
           [MAP.main.playbar.buttons.button.wrapper__indicator]: isActive,
-          [MAP.main.playbar.buttons.button.wrapper__active]: isActive || isActiveNoIndicator,
+          [MAP.main.playbar.buttons.button.wrapper__active]: isActive || isActiveNoIndicator
         })}
         data-active={isActive.toString()}
         disabled={disabled}

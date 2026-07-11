@@ -5,3 +5,5 @@
 /modules/*/**/*.css
 /modules/*/timestamp
 /modules/*/classmap.d.ts
+
+/modules/lyrics-plus

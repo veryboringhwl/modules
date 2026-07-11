@@ -7,7 +7,7 @@ const compareVersionsDesc = (leftVersion: string, rightVersion: string) => {
   } catch {
     return rightVersion.localeCompare(leftVersion, undefined, {
       numeric: true,
-      sensitivity: "base",
+      sensitivity: "base"
     });
   }
 };
@@ -171,7 +171,7 @@ const sortInstancesByPreference = (instances: ModuleInstance[]) => {
 
 async function* getModuleInstances(
   moduleIdentifier: ModuleIdentifier,
-  versionRange: string,
+  versionRange: string
 ): AsyncGenerator<ModuleInstance> {
   const module = RootModule.INSTANCE.getDescendant(moduleIdentifier);
   if (!module) {
@@ -180,8 +180,8 @@ async function* getModuleInstances(
 
   const candidates = sortInstancesByPreference(
     Array.from(module.instances.values()).filter((instance) =>
-      matchesVersionRange(instance.getVersion(), versionRange),
-    ),
+      matchesVersionRange(instance.getVersion(), versionRange)
+    )
   );
 
   for (const candidate of candidates) {
@@ -195,7 +195,7 @@ type SharedGeneratorFactories = WeakMap<ModuleInstance, AsyncGeneratorFactory<De
 async function* getInstanceGeneratorCandidates(
   instanceGenerator: AsyncGenerator<ModuleInstance>,
   accumulator: ReadonlyDeps,
-  sharedGenerators: SharedGeneratorFactories,
+  sharedGenerators: SharedGeneratorFactories
 ): AsyncGenerator<DependencyTree> {
   for await (const instance of instanceGenerator) {
     yield* getInstanceDependencyCandidates(instance, accumulator, sharedGenerators);
@@ -205,23 +205,23 @@ async function* getInstanceGeneratorCandidates(
 async function* getDependenciesTreeCandidates(
   dependencies: Record<string, string>,
   accumulator = new ReadonlyDeps(),
-  sharedGenerators: SharedGeneratorFactories = new WeakMap(),
+  sharedGenerators: SharedGeneratorFactories = new WeakMap()
 ): AsyncGenerator<DependencyTree[]> {
   const instanceGenerators = Object.entries(dependencies).map(([moduleIdentifier, versionRange]) =>
-    getModuleInstances(moduleIdentifier as ModuleIdentifier, versionRange),
+    getModuleInstances(moduleIdentifier as ModuleIdentifier, versionRange)
   );
 
   yield* getInstanceGeneratorsDependencyCandidates(
     instanceGenerators,
     accumulator,
-    sharedGenerators,
+    sharedGenerators
   );
 }
 
 async function* getInstanceDependencyCandidates(
   instance: ModuleInstance,
   accumulator = new ReadonlyDeps(),
-  sharedGenerators: SharedGeneratorFactories = new WeakMap(),
+  sharedGenerators: SharedGeneratorFactories = new WeakMap()
 ): AsyncGenerator<DependencyTree> {
   if (!(await ensureModuleInstanceMetadata(instance))) {
     return;
@@ -235,7 +235,7 @@ async function* getInstanceDependencyCandidates(
   async function* resolveCandidateTrees(
     target: ModuleInstance,
     acc: ReadonlyDeps,
-    generators: SharedGeneratorFactories,
+    generators: SharedGeneratorFactories
   ) {
     const dependencies = target.metadata?.dependencies ?? {};
 
@@ -247,7 +247,7 @@ async function* getInstanceDependencyCandidates(
   let sharedFactory = sharedGenerators.get(instance);
   if (!sharedFactory) {
     sharedFactory = createSharedGeneratorFactory(
-      resolveCandidateTrees(instance, accumulator, sharedGenerators),
+      resolveCandidateTrees(instance, accumulator, sharedGenerators)
     );
     sharedGenerators.set(instance, sharedFactory);
   }
@@ -262,12 +262,12 @@ async function* getInstanceDependencyCandidates(
 export async function* getInstanceGeneratorsDependencyCandidates(
   instanceGenerators: Array<AsyncGenerator<ModuleInstance>>,
   accumulator = new ReadonlyDeps(),
-  sharedGenerators: SharedGeneratorFactories = new WeakMap(),
+  sharedGenerators: SharedGeneratorFactories = new WeakMap()
 ): AsyncGenerator<DependencyTree[]> {
   const generators = instanceGenerators.map((instanceGenerator) =>
     (async function* () {
       yield* getInstanceGeneratorCandidates(instanceGenerator, accumulator, sharedGenerators);
-    })(),
+    })()
   );
 
   for await (const combination of getCombinationsFromGenerators(...generators)) {
@@ -346,8 +346,8 @@ function* getCombinationsFromArrays<T>(...arrays: Array<Array<T>>): Generator<Ar
       ...arrays.map((array, arrayIndex) =>
         index === arrayIndex
           ? [array[indexes[arrayIndex]]]
-          : array.slice(0, indexes[arrayIndex] + 1),
-      ),
+          : array.slice(0, indexes[arrayIndex] + 1)
+      )
     );
   }
 }

@@ -1,6 +1,8 @@
 import { PlaybarButton } from "/modules/stdlib/src/registers/playbarButton.tsx";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 
+import { logger } from "../load.tsx";
+
 export const TestPlaybarButton = () => (
   <PlaybarButton
     icon={
@@ -17,7 +19,7 @@ export const TestPlaybarButton = () => (
     }
     label="test-button"
     onClick={() => {
-      console.log("test-button clicked");
+      logger.log("test-button clicked");
     }}
   />
 );

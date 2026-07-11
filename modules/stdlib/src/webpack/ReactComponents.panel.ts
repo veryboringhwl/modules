@@ -1,4 +1,5 @@
 import { fnStr } from "/hooks/util.ts";
+
 import { webpackRequire } from "../wpunpk.mix.ts";
 import { matchWebpackModule } from "../wpunpk.ts";
 
@@ -16,7 +17,7 @@ matchWebpackModule(
   (id, _$) => {
     const module = Object.values(webpackRequire(id));
     PanelContainer = module.find((m) => typeof m === "function");
-  },
+  }
 );
 
 matchWebpackModule(
@@ -27,7 +28,7 @@ matchWebpackModule(
   (id, _$) => {
     const module = webpackRequire(id);
     PanelContent = Object.values(module)[0];
-  },
+  }
 );
 
 matchWebpackModule(
@@ -38,5 +39,5 @@ matchWebpackModule(
   (id, _$) => {
     const module = webpackRequire(id);
     PanelHeader = Object.values(module)[0];
-  },
+  }
 );

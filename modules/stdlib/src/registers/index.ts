@@ -1,15 +1,16 @@
-import type { ModuleInstance } from "/hooks/module.ts";
 import menu from "./menu.tsx";
 import navlink from "./navlink.tsx";
 import panel from "./panel.ts";
 import playbarButton from "./playbarButton.tsx";
 import playbarWidget from "./playbarWidget.tsx";
-import type { Registry } from "./registry.ts";
 import root from "./root.ts";
 import route from "./route.ts";
 import settingsSection from "./settingsSection.ts";
 import topbarLeftButton from "./topbarLeftButton.tsx";
 import topbarRightButton from "./topbarRightButton.tsx";
+
+import type { Registry } from "./registry.ts";
+import type { ModuleInstance } from "/hooks/module.ts";
 
 // TODO:
 // workout what to do with ButtonTertiary icons
@@ -32,7 +33,7 @@ const registers = {
   route,
   settingsSection,
   topbarLeftButton,
-  topbarRightButton,
+  topbarRightButton
 } satisfies Record<string, Registry<any>>;
 type Registers = typeof registers;
 

@@ -4,7 +4,7 @@ import {
   SettingsRow,
   SettingsRowEnd,
   SettingsRowStart,
-  SettingsSection,
+  SettingsSection
 } from "/modules/stdlib/src/expose/SettingsSection.ts";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 import { Toggle } from "/modules/stdlib/src/webpack/ReactComponents.ts";

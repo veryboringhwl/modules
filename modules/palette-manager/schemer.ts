@@ -1,5 +1,6 @@
-import type { ModuleInstance } from "/hooks/module.ts";
 import { Palette, PaletteManager } from "./preload.ts";
+
+import type { ModuleInstance } from "/hooks/module.ts";
 
 class Schemer {
   constructor(private mod: ModuleInstance) {

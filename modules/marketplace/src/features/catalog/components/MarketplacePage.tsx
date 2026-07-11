@@ -4,26 +4,25 @@ import {
   TreeNodeVal,
   useChipFilter,
   useDropdown,
-  useSearchBar,
+  useSearchBar
 } from "/modules/stdlib/lib/components/index.tsx";
 import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
+
+import { settings } from "../../../../load.tsx";
 import { t } from "../../../shared/i18n.ts";
-import {
-  getHideCoreModules,
-  subscribeHideCoreModules,
-} from "../../../shared/marketplaceSettings.ts";
 import { useMarketplaceCatalog } from "../hooks/useMarketplaceCatalog.ts";
 import { getCatalogKey } from "../services/catalogService.ts";
-import type { MarketplaceCatalogItem } from "../types.ts";
 import { ModuleCard } from "./ModuleCard.tsx";
 import { VersionControlsDialog } from "./VersionControlsDialog.tsx";
+
+import type { MarketplaceCatalogItem } from "../types.ts";
 
 const SortOptions = {
   default: () => t("marketplace.sort.default"),
   "a-z": () => t("marketplace.sort.a-z"),
   "z-a": () => t("marketplace.sort.z-a"),
-  random: () => t("marketplace.sort.random"),
+  random: () => t("marketplace.sort.random")
 };
 
 const sortLabel = (item: MarketplaceCatalogItem) => item.metadata?.name ?? item.identifier;
@@ -35,13 +34,13 @@ const SortFns: Record<
   default: null,
   "a-z": (left, right) =>
     sortLabel(left).localeCompare(sortLabel(right), undefined, {
-      sensitivity: "base",
+      sensitivity: "base"
     }),
   "z-a": (left, right) =>
     sortLabel(right).localeCompare(sortLabel(left), undefined, {
-      sensitivity: "base",
+      sensitivity: "base"
     }),
-  random: () => Math.random() - 0.5,
+  random: () => Math.random() - 0.5
 };
 
 const hasTag = (item: MarketplaceCatalogItem, tag: string) =>
@@ -57,8 +56,8 @@ const isCoreModuleItem = (item: MarketplaceCatalogItem) => {
 const enabledFilterLabels = { enabled: { [TreeNodeVal]: t("marketplace.filters.enabled") } };
 const enabledFilterFns = {
   enabled: {
-    [TreeNodeVal]: (item: MarketplaceCatalogItem) => item.instance.isLoaded(),
-  },
+    [TreeNodeVal]: (item: MarketplaceCatalogItem) => item.instance.isLoaded()
+  }
 };
 
 export const MarketplacePage = () => {
@@ -85,16 +84,12 @@ export const MarketplacePage = () => {
     selectedKeys,
     setSelectionKeys,
     selectOnly,
-    selectVersion,
+    selectVersion
   } = useMarketplaceCatalog();
 
   const lastSelectedKeyRef = React.useRef<string | null>(null);
-  const [hideCoreModules, setHideCoreModules] = React.useState(() => getHideCoreModules());
+  const { hideCoreModules } = settings.useSettings();
   const [isVersionDialogOpen, setVersionDialogOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    return subscribeHideCoreModules(setHideCoreModules);
-  }, []);
 
   const availableFilters = React.useMemo(
     () => ({
@@ -103,9 +98,9 @@ export const MarketplacePage = () => {
       extensions: { [TreeNodeVal]: t("marketplace.filters.extensions"), ...enabledFilterLabels },
       apps: { [TreeNodeVal]: t("marketplace.filters.apps"), ...enabledFilterLabels },
       snippets: { [TreeNodeVal]: t("marketplace.filters.snippets"), ...enabledFilterLabels },
-      libs: { [TreeNodeVal]: t("marketplace.filters.libs"), ...enabledFilterLabels },
+      libs: { [TreeNodeVal]: t("marketplace.filters.libs"), ...enabledFilterLabels }
     }),
-    [],
+    []
   );
 
   const filterFns = React.useMemo<RTree<(item: MarketplaceCatalogItem) => boolean>>(
@@ -119,31 +114,31 @@ export const MarketplacePage = () => {
       },
       themes: {
         [TreeNodeVal]: (item) => hasTag(item, "theme"),
-        ...enabledFilterFns,
+        ...enabledFilterFns
       },
       apps: {
         [TreeNodeVal]: (item) => hasTag(item, "app"),
-        ...enabledFilterFns,
+        ...enabledFilterFns
       },
       extensions: {
         [TreeNodeVal]: (item) => hasTag(item, "extension"),
-        ...enabledFilterFns,
+        ...enabledFilterFns
       },
       snippets: {
         [TreeNodeVal]: (item) => hasTag(item, "snippet"),
-        ...enabledFilterFns,
+        ...enabledFilterFns
       },
       libs: {
         [TreeNodeVal]: (item) => hasTag(item, "lib"),
-        ...enabledFilterFns,
-      },
+        ...enabledFilterFns
+      }
     }),
-    [hideCoreModules],
+    [hideCoreModules]
   );
 
   const [searchbar, search] = useSearchBar({
     placeholder: t("marketplace.search.placeholder"),
-    expanded: true,
+    expanded: true
   });
 
   const [sortbox, sortOption] = useDropdown({ options: SortOptions });
@@ -157,9 +152,9 @@ export const MarketplacePage = () => {
         ({ key }) =>
           getProp(filterFns, key) as {
             [TreeNodeVal]: (item: MarketplaceCatalogItem) => boolean;
-          },
+          }
       ),
-    [filterFns, selectedFilters],
+    [filterFns, selectedFilters]
   );
 
   const visibleItems = React.useMemo(() => {
@@ -167,7 +162,7 @@ export const MarketplacePage = () => {
 
     const filteredByChips = selectedFilterFns.reduce(
       (accumulator, filter) => accumulator.filter(filter[TreeNodeVal]),
-      items,
+      items
     );
 
     const filteredBySearch = filteredByChips.filter((item) => {
@@ -181,7 +176,7 @@ export const MarketplacePage = () => {
         item.metadata?.name ?? "",
         item.metadata?.description ?? "",
         ...(item.metadata?.authors ?? []),
-        ...(item.metadata?.tags ?? []),
+        ...(item.metadata?.tags ?? [])
       ];
 
       return searchableFields.some((field) => field.toLowerCase().includes(normalizedSearch));
@@ -203,12 +198,12 @@ export const MarketplacePage = () => {
     const encodedArtifactUrl = encodeURIComponent(artifactUrl);
     const query = new URLSearchParams({
       id: item.identifier,
-      version: item.version,
+      version: item.version
     });
 
     Platform.getHistory().push(
       `/bespoke/marketplace/module/${encodedArtifactUrl}?${query.toString()}`,
-      null,
+      null
     );
   }, []);
 
@@ -229,7 +224,7 @@ export const MarketplacePage = () => {
         if (currentIndex !== -1 && anchorIndex !== -1) {
           const [start, end] = [
             Math.min(anchorIndex, currentIndex),
-            Math.max(anchorIndex, currentIndex),
+            Math.max(anchorIndex, currentIndex)
           ];
           const rangeKeys = visibleKeys.slice(start, end + 1);
           setSelectionKeys([...selectedKeys, ...rangeKeys]);
@@ -260,8 +255,8 @@ export const MarketplacePage = () => {
       selectedKeys,
       setSelectionKeys,
       toggleSelected,
-      visibleItems,
-    ],
+      visibleItems
+    ]
   );
 
   const onToggleSelected = React.useCallback(
@@ -274,7 +269,7 @@ export const MarketplacePage = () => {
       toggleSelected(item);
       lastSelectedKeyRef.current = getCatalogKey(item);
     },
-    [onCardSelectGesture, toggleSelected],
+    [onCardSelectGesture, toggleSelected]
   );
 
   return (
@@ -306,7 +301,7 @@ export const MarketplacePage = () => {
               ? t("marketplace.selection.enabling")
               : selectedCount > 0
                 ? t("marketplace.selection.enableSelectedCount", {
-                    count: selectedCount,
+                    count: selectedCount
                   })
                 : t("marketplace.selection.enableSelected")}
           </button>

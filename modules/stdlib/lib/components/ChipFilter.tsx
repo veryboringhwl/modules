@@ -34,5 +34,5 @@ export const ChipFilter = React.memo(
         </ScrollableContainer>
       )
     );
-  },
+  }
 );

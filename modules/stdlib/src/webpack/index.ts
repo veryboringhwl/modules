@@ -2,7 +2,7 @@ import {
   type WebpackModule,
   type WebpackRequire,
   webpackRequire,
-  webpackRequireReady,
+  webpackRequireReady
 } from "../wpunpk.mix.ts";
 
 export let modules: Array<[number, WebpackModule]>;
@@ -27,7 +27,7 @@ export const analyzeWebpackRequire = (webpackRequire: WebpackRequire) => {
     .flatMap((module) => {
       try {
         return Object.values(module);
-      } catch (_) {}
+      } catch {}
     })
     .filter(Boolean) as Array<any>;
 
@@ -42,7 +42,7 @@ export const analyzeWebpackRequire = (webpackRequire: WebpackRequire) => {
   const exportedMemos = (exportedReactObjects[Symbol.for("react.memo") as any] ??
     []) as React.NamedExoticComponent[];
   const exportedMemoForwardRefs = exportedMemos.filter(
-    (m) => m.type?.$$typeof === Symbol.for("react.forward_ref"),
+    (m) => m.type?.$$typeof === Symbol.for("react.forward_ref")
   ) as Array<React.NamedExoticComponent & { type: React.ForwardRefExoticComponent<any> }>;
 
   return {
@@ -54,7 +54,7 @@ export const analyzeWebpackRequire = (webpackRequire: WebpackRequire) => {
     exportedContexts,
     exportedForwardRefs,
     exportedMemos,
-    exportedMemoForwardRefs,
+    exportedMemoForwardRefs
   };
 };
 
@@ -65,9 +65,9 @@ Object.assign(CHUNKS, {
   xpui: {
     promise: Promise.all([
       CHUNKS["/xpui-modules.js"].promise,
-      CHUNKS["/xpui-snapshot.js"].promise,
-    ]) as any,
-  },
+      CHUNKS["/xpui-snapshot.js"].promise
+    ]) as any
+  }
 });
 
 export const ready = (async () => {

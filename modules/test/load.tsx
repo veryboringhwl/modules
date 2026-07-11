@@ -1,9 +1,9 @@
-import type { ModuleInstance } from "/hooks/module.ts";
-import { createRegistrar } from "/modules/stdlib/mod.ts";
+import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
 import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 // import panelReg from "/modules/stdlib/src/registers/panel.ts";
 import { Route } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+
 import {
   TestMenu,
   TestNavLink,
@@ -12,14 +12,18 @@ import {
   TestPlaybarWidget,
   TestSettingsSection,
   TestTopbarLeftButton,
-  TestTopbarRightButton,
+  TestTopbarRightButton
 } from "./registers/index.ts";
+
+import type { ModuleInstance } from "/hooks/module.ts";
 
 export let module: ModuleInstance;
 export let hash: { state: string; event: string } | undefined;
+export let logger: Console;
 export default function (mod: ModuleInstance) {
   module = mod;
   const registrar = createRegistrar(mod);
+  logger = createLogger(mod);
   registrar.register("topbarLeftButton", <TestTopbarLeftButton />);
   registrar.register("topbarRightButton", <TestTopbarRightButton />);
   registrar.register("playbarButton", <TestPlaybarButton />);
@@ -44,6 +48,7 @@ const configureExpFeatures = async () => {
   const overrides = {
     enableShareDialog: true,
     enableYlxMultiSelect: true,
+    enableDebugTools: true
   };
 
   const RemoteConfigDebugAPI = Platform.getRemoteConfigDebugAPI();

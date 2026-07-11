@@ -1,5 +1,6 @@
 import { display } from "/modules/stdlib/lib/modal.tsx";
 import { TopbarLeftButton } from "/modules/stdlib/src/registers/topbarLeftButton.tsx";
+
 import Modal from "./modal.tsx";
 
 const Icon = () => (
@@ -25,7 +26,7 @@ export const EditButton = () => {
         display({
           title: "Palette Manager",
           content: <Modal />,
-          isLarge: true,
+          isLarge: true
         });
       }}
     />

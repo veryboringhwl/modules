@@ -1,6 +1,7 @@
-import type { ModuleInstance } from "/hooks/module.ts";
 import { createStorage } from "/modules/stdlib/mod.ts";
 import { Color } from "/modules/stdlib/src/webpack/misc.xpui.ts";
+
+import type { ModuleInstance } from "/hooks/module.ts";
 
 let storage: Storage;
 export default function (mod: ModuleInstance) {
@@ -24,7 +25,7 @@ const def_fields = {
   tab: Color.fromHex("#b3b3b3"),
   tab_active: Color.fromHex("#ffffff"),
   playbar: Color.fromHex("#ffffff"),
-  playbar_active: Color.fromHex("#1ed760"),
+  playbar_active: Color.fromHex("#1ed760")
 };
 
 type PaletteData = { id: string; name: string; colors: Record<string, string> };
@@ -33,7 +34,7 @@ export class Palette {
     public id: string,
     public name: string,
     public colors: Record<string, Color>,
-    public isStatic = true,
+    public isStatic = true
   ) {}
 
   overwrite(map: Record<string, Color>) {

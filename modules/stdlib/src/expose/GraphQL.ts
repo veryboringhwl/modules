@@ -13,7 +13,7 @@ export type GraphQLDefs = {
 
 export const GraphQLDefs = {
   query: {},
-  mutation: {},
+  mutation: {}
 } as GraphQLDefs;
 
 transformer(
@@ -21,7 +21,7 @@ transformer(
     emit();
 
     const matches = str.matchAll(
-      /(=new [a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*\("(?<name>\w+)","(?<operation>query|mutation)","(?<sha256Hash>[\w\d]{64})",null\))/g,
+      /(=new [a-zA-Z_$][\w$]*\.[a-zA-Z_$][\w$]*\("(?<name>\w+)","(?<operation>query|mutation)","(?<sha256Hash>[\w\d]{64})",null\))/g
     );
     for (const match of matches) {
       const { name, operation, sha256Hash } = match.groups!;
@@ -30,13 +30,13 @@ transformer(
         name,
         operation,
         sha256Hash,
-        value: null,
+        value: null
       };
     }
 
     return str;
   },
   {
-    glob: /.+\.js$/,
-  },
+    glob: /.+\.js$/
+  }
 );

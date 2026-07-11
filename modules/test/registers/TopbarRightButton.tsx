@@ -1,6 +1,8 @@
 import { TopbarRightButton } from "/modules/stdlib/src/registers/topbarRightButton.tsx";
 import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
 
+import { logger } from "../load.tsx";
+
 export const TestTopbarRightButton = () => (
   <TopbarRightButton
     icon={
@@ -17,7 +19,7 @@ export const TestTopbarRightButton = () => (
     }
     label="test-button"
     onClick={() => {
-      console.log("Button clicked");
+      logger.log("Button clicked");
     }}
   />
 );

@@ -1,4 +1,5 @@
 import { fnStr } from "/hooks/util.ts";
+
 import { webpackRequire } from "../wpunpk.mix.ts";
 import { matchWebpackModule } from "../wpunpk.ts";
 
@@ -25,7 +26,7 @@ matchWebpackModule(
   (id, _$) => {
     const module = webpackRequire(id);
     Toggle = Object.values(module)[0];
-  },
+  }
 );
 
 matchWebpackModule(
@@ -36,7 +37,7 @@ matchWebpackModule(
   (id, _$) => {
     const module = webpackRequire(id);
     Slider = Object.values(module)[0];
-  },
+  }
 );
 
 matchWebpackModule(
@@ -49,6 +50,6 @@ matchWebpackModule(
     await new Promise(setTimeout);
     const module = webpackRequire(id);
     TracklistRow = Object.values(module)[0];
-  },
+  }
 );
 // })

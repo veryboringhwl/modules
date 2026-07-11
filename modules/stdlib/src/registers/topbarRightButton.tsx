@@ -36,14 +36,14 @@ transformer(
 
     str = str.replace(
       /("login-button"[\s\S]*?![\w$]+\s*&&\s*\(0,[\w$]+\.jsxs\)\("div",\s*\{\s*className:\s*[\w$]+\(\)\([^)]+\),\s*children:\s*\[)/,
-      "$1__renderTopbarRightButtons(),",
+      "$1__renderTopbarRightButtons(),"
     );
 
     return str;
   },
   {
-    glob: /^\/xpui-snapshot\.js/,
-  },
+    glob: /^\/xpui-snapshot\.js/
+  }
 );
 
 type TopbarRightButtonProps = {
@@ -57,7 +57,7 @@ export const TopbarRightButton: React.FC<TopbarRightButtonProps> = ({
   label,
   disabled,
   icon,
-  onClick,
+  onClick
 }: TopbarRightButtonProps) => {
   return (
     <Tooltip label={label}>

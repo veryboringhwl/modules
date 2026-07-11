@@ -1,5 +1,6 @@
 import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { exportedFunctions } from "/modules/stdlib/src/webpack/index.js";
+
 import { logger } from "../../load.ts";
 
 export const EsperantoTransport = Platform.getEsperantoTransport();
@@ -20,11 +21,6 @@ export interface SlotsClient {
 
 export interface TestingClient {
   addPlaytime(params: { seconds: number }): Promise<void>;
-}
-
-export interface PrefsClient {
-  set(params: { entries: any }): Promise<void> | void;
-  sub(params: { key: string }, callback: (data: { entries: any }) => void): { cancel: () => void };
 }
 
 export function getEsperantoClient<T>(serviceId: string): T | undefined {

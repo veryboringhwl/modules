@@ -40,15 +40,15 @@ transformer(
   (emit) => (str) => {
     str = str.replace(
       /("spotify:app:home"[\s\S]*?,[a-zA-Z_$][\w$]*=\(\{children:([a-zA-Z_$][\w$]*)\}\)=>[^}]*?,children:)\2/,
-      "$1[$2,__renderNavLinks()]",
+      "$1[$2,__renderNavLinks()]"
     );
 
     emit();
     return str;
   },
   {
-    glob: /^\/xpui-snapshot\.js/,
-  },
+    glob: /^\/xpui-snapshot\.js/
+  }
 );
 
 export type NavLinkProps = {
@@ -62,7 +62,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
   localizedApp,
   appRoutePath,
   icon,
-  activeIcon,
+  activeIcon
 }) => {
   const History = Platform.getHistory();
   const [currentPathname, setCurrentPathname] = React.useState(History.location.pathname);
@@ -86,7 +86,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
       <UI.ButtonTertiary
         aria-label={localizedApp}
         className={classnames("_Bg_zSvFrEutyacG kUHE42xvQVzWqabl uBpmNFia37U4nzmX", {
-          kxv3By32Og8yDEXy: isActive,
+          kxv3By32Og8yDEXy: isActive
         })}
         iconOnly={(props) =>
           React.isValidElement(currentIcon) ? React.cloneElement(currentIcon, props) : null

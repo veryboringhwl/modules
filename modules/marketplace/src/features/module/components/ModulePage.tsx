@@ -1,16 +1,18 @@
-import type { Module, ModuleInstance } from "/hooks/module.ts";
 import { RootModule } from "/hooks/module.ts";
 import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
 import { React } from "/modules/stdlib/src/expose/React.ts";
 import { useLocation, useMatch } from "/modules/stdlib/src/webpack/ReactRouter.ts";
+
 import { t } from "../../../shared/i18n.ts";
 import {
   executeMarketplaceAction,
   getPrimaryAction,
-  getSecondaryAction,
+  getSecondaryAction
 } from "../../catalog/services/catalogService.ts";
-import type { MarketplaceCatalogItem } from "../../catalog/types.ts";
 import { RemoteMarkdown } from "./RemoteMarkdown.tsx";
+
+import type { MarketplaceCatalogItem } from "../../catalog/types.ts";
+import type { Module, ModuleInstance } from "/hooks/module.ts";
 
 const parseArtifactPath = (artifactUrl: string) => {
   const cleanArtifactUrl = artifactUrl.split("?")[0].split("#")[0];
@@ -24,7 +26,7 @@ const parseArtifactPath = (artifactUrl: string) => {
 
   return {
     moduleIdentifier: rawIdentifier,
-    version: match.groups.version,
+    version: match.groups.version
   };
 };
 
@@ -75,7 +77,7 @@ const createCatalogItem = (instance: ModuleInstance): MarketplaceCatalogItem => 
     instance,
     instances,
     metadata: instance.metadata,
-    version: instance.getVersion(),
+    version: instance.getVersion()
   };
 };
 
@@ -94,7 +96,7 @@ const hydrateMetadata = async (instance: ModuleInstance) => {
 const resolveMarketplaceInstance = async (
   moduleIdentifier: string,
   version: string,
-  artifactUrl: string,
+  artifactUrl: string
 ): Promise<ModuleInstance> => {
   const localModule = RootModule.INSTANCE.getDescendant(moduleIdentifier);
   const localInstance = localModule?.instances.get(version);
@@ -113,7 +115,7 @@ const resolveMarketplaceInstance = async (
   const remoteInstance = await module.newInstance(version, {
     installed: false,
     artifacts: [artifactUrl],
-    checksum: "",
+    checksum: ""
   });
 
   await hydrateMetadata(remoteInstance);
@@ -126,12 +128,12 @@ export const ModulePage = () => {
 
   const artifactUrl = React.useMemo(
     () => decodeURIComponent(routeMatch?.params?.aurl ?? ""),
-    [routeMatch?.params?.aurl],
+    [routeMatch?.params?.aurl]
   );
 
   const query = React.useMemo(
     () => new URLSearchParams(location?.search ?? ""),
-    [location?.search],
+    [location?.search]
   );
 
   const parsedArtifact = React.useMemo(() => parseArtifactPath(artifactUrl), [artifactUrl]);
@@ -157,12 +159,12 @@ export const ModulePage = () => {
       const resolvedInstance = await resolveMarketplaceInstance(
         moduleIdentifier,
         version,
-        artifactUrl,
+        artifactUrl
       );
       setItem(createCatalogItem(resolvedInstance));
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : t("marketplace.errors.loadModuleDetails"),
+        error instanceof Error ? error.message : t("marketplace.errors.loadModuleDetails")
       );
     } finally {
       setIsLoading(false);
@@ -193,8 +195,8 @@ export const ModulePage = () => {
           t("marketplace.errors.actionFailed", {
             action: primaryAction.label,
             module: item.identifier,
-            version: item.version,
-          }),
+            version: item.version
+          })
         );
         return;
       }
@@ -202,7 +204,7 @@ export const ModulePage = () => {
       await refresh();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : t("marketplace.errors.runModuleAction"),
+        error instanceof Error ? error.message : t("marketplace.errors.runModuleAction")
       );
     } finally {
       setIsActionPending(false);
@@ -229,8 +231,8 @@ export const ModulePage = () => {
           t("marketplace.errors.actionFailed", {
             action: secondaryAction.label,
             module: item.identifier,
-            version: item.version,
-          }),
+            version: item.version
+          })
         );
         return;
       }
@@ -238,7 +240,7 @@ export const ModulePage = () => {
       await refresh();
     } catch (error) {
       setErrorMessage(
-        error instanceof Error ? error.message : t("marketplace.errors.runModuleAction"),
+        error instanceof Error ? error.message : t("marketplace.errors.runModuleAction")
       );
     } finally {
       setIsActionPending(false);
