@@ -7,7 +7,7 @@
     //just to keep deno happy, creator handles this
     "react/jsx-runtime": "npm:react/jsx-runtime",
     "/modules/": "file:///D:/v3/modules/modules/",
-    "/hooks/": "file://D:/v3/hooks/",
+    "/hooks/": "file://D:/v3/hooks/"
   },
   "tasks": {
     "fmt": "deno run -A npm:oxfmt -c .oxfmtrc.json",
@@ -20,18 +20,18 @@
     "disable": "deno run -A ./scripts/disable.ts",
     "local": "deno run -A ./scripts/local.ts",
     "release": {
-      "dependencies": ["fmt", "lint"],
-    },
+      "dependencies": ["fmt", "lint"]
+    }
   },
   "compilerOptions": {
     "jsx": "react-jsx",
     "noImplicitOverride": true,
-    "lib": ["DOM", "ESNext", "deno.ns"],
+    "lib": ["DOM", "ESNext", "deno.ns"]
   },
   "lint": {
-    "exclude": ["**/*"],
+    "exclude": ["**/*"]
   },
   "format": {
-    "exclude": ["**/*"],
-  },
+    "exclude": ["**/*"]
+  }
 }
