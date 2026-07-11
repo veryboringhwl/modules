@@ -17,7 +17,7 @@ jobs:
           - name: Check formatting
             run: deno run -A npm:oxfmt --check
           - name: Lint
-            run: deno run -A npm:oxfmt --deny-warnings
+            run: deno run -A npm:oxlint --deny-warnings
 
   analyze:
     name: Analyze (${{ matrix.language }})
