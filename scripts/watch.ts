@@ -1,6 +1,7 @@
+/* oxlint-disable no-console */
+
 import { basename } from "jsr:@std/path";
 
-import { logger } from "./logger.ts";
 import { getId, getModuleDirs, MODULE_ROOT } from "./vars.ts";
 
 const dirs = Deno.args.length > 0 ? Deno.args : await getModuleDirs();
@@ -10,7 +11,7 @@ const procs: Promise<Deno.CommandOutput>[] = [];
 for (const dir of dirs) {
   const module = basename(dir);
   const id = getId(module);
-  logger.log(`Watching ${id}`);
+  console.log(`Watching ${id}`);
 
   const args = [
     "run",
@@ -41,4 +42,4 @@ for (const dir of dirs) {
 }
 
 await Promise.all(procs);
-logger.log("Done");
+console.log("Done");

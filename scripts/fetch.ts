@@ -1,7 +1,8 @@
-import { logger } from "./logger.ts";
+/* oxlint-disable no-console */
+
 import { MODULE_ROOT } from "./vars.ts";
 
-logger.log("Fetching classmap...");
+console.log("Fetching classmap...");
 
 const args = [
   "run",

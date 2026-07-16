@@ -1,6 +1,7 @@
+/* oxlint-disable no-console */
+
 import { basename } from "jsr:@std/path";
 
-import { logger } from "./logger.ts";
 import { getFullId, getModuleDirs, MODULE_ROOT } from "./vars.ts";
 
 const dirs = Deno.args.length > 0 ? Deno.args : await getModuleDirs();
@@ -8,7 +9,7 @@ const dirs = Deno.args.length > 0 ? Deno.args : await getModuleDirs();
 for (const dir of dirs) {
   const module = basename(dir);
   const fid = await getFullId(module);
-  logger.log(`Enabling ${fid}`);
+  console.log(`Enabling ${fid}`);
 
   await new Deno.Command("spicetify", {
     args: ["pkg", "install", fid, dir],

@@ -1,6 +1,6 @@
-import { join, resolve } from "jsr:@std/path";
+/* oxlint-disable no-console */
 
-import { logger } from "./logger.ts";
+import { join, resolve } from "jsr:@std/path";
 
 export const MODULE_ROOT = resolve(import.meta.dirname!, "..");
 export const MODULES_DIR = join(MODULE_ROOT, "modules");
@@ -24,7 +24,7 @@ export async function getModuleDirs(): Promise<string[]> {
       }
     }
   } catch {
-    logger.warn("The 'modules' directory was not found.");
+    console.warn("The 'modules' directory was not found.");
   }
   return dirs;
 }
