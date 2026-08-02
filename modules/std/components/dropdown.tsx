@@ -1,13 +1,11 @@
-import { UI } from "../../src/webpack/ComponentLibrary.ts";
-import { ContextMenu, Menu, MenuItem } from "../../src/webpack/ReactComponents.ts";
-import { createIconComponent } from "../createIconComponent.tsx";
-
-import type { React } from "../../src/expose/React.ts";
+import { React } from "../libs/react.ts";
+import { UI } from "./componentLibrary.ts";
+import { createIconComponent } from "./createIconComponent.tsx";
+import { ContextMenu, Menu, MenuItem } from "./reactComponents.ts";
 
 const CheckIcon = () =>
   createIconComponent({
-    // TODO
-    icon: "" /*  SVGIcons.check */
+    icon: ""
   });
 
 interface MenuItemProps<O extends string> {
@@ -49,7 +47,7 @@ interface DropdownMenuProps<O extends DropdownOptions> {
   activeOption: Extract<keyof NoInfer<O>, string>;
   onSwitch: (option: Extract<keyof NoInfer<O>, string>) => void;
 }
-export default function <O extends DropdownOptions>({
+function Dropdown<O extends DropdownOptions>({
   options,
   activeOption,
   onSwitch
@@ -104,3 +102,55 @@ export default function <O extends DropdownOptions>({
     </ContextMenu>
   );
 }
+export default Dropdown;
+
+export const useDropdown = <O extends DropdownOptions>({
+  options,
+  storage,
+  storageVariable
+}: {
+  options: O;
+  storage?: Storage;
+  storageVariable?: string;
+}) => {
+  const [initialStorageVariable] = React.useState(storageVariable);
+  const getDefaultOption = () => Object.keys(options).at(0) as Extract<keyof O, string>;
+  const [activeOption, setActiveOption] = React.useState(getDefaultOption);
+
+  React.useEffect(() => {
+    if (storage && initialStorageVariable) {
+      const stored = storage.getItem(`drop-down:${initialStorageVariable}`);
+      if (stored !== null) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (options[parsed as Extract<keyof O, string>]) {
+            setActiveOption(parsed as Extract<keyof O, string>);
+          }
+        } catch {}
+      }
+    }
+  }, [storage, initialStorageVariable, options]);
+
+  const setPersistedActiveOption = React.useCallback(
+    (reducer: (state: Extract<keyof O, string>) => Extract<keyof O, string>) => {
+      setActiveOption((prev) => {
+        const next = reducer(prev);
+        if (storage && initialStorageVariable) {
+          storage.setItem(`drop-down:${initialStorageVariable}`, JSON.stringify(next));
+        }
+        return next;
+      });
+    },
+    [storage, initialStorageVariable]
+  );
+
+  const dropdown = (
+    <Dropdown
+      activeOption={activeOption}
+      onSwitch={(o) => setPersistedActiveOption(() => o)}
+      options={options}
+    />
+  );
+
+  return [dropdown, activeOption, setPersistedActiveOption] as const;
+};

@@ -1,9 +1,9 @@
-import { hotwire, type IndexMixinFn } from "/hooks/module.ts";
+import type { IndexLoadFn, IndexMixinFn } from "/hooks/module.ts";
 
-export const mixin: IndexMixinFn = hotwire(
-  import.meta,
-  "./mixin.ts",
-  async () => await import("./mixin.ts")
-);
+export const mixin: IndexMixinFn = async (context) => {
+  return (await import("./mixin.ts")).default(context);
+};
 
-// export const load: IndexLoadFn = hotwire(import.meta, "./load.ts", () => import("./load.ts"));
+export const load: IndexLoadFn = async (context) => {
+  return (await import("./load.ts")).default(context.module);
+};

@@ -1,31 +1,19 @@
-import { hotwired, type MixinContext } from "/hooks/module.ts";
+import { setTransformer } from "./core/transformer.ts";
 
-const nativeObjectDefineProperty = Object.defineProperty;
-Object.defineProperty = (obj, prop, descriptor) => {
-  if (prop !== "prototype" && descriptor) {
-    descriptor.configurable ??= true;
-  }
-  return nativeObjectDefineProperty(obj, prop, descriptor);
+import type { MixinContext } from "/hooks/module.ts";
+
+export default async (context: MixinContext) => {
+  setTransformer(context.transformer);
+
+  await import("./core/wpunpk.mix.ts");
+  await import("./core/events.mix.ts");
+
+  await Promise.all([
+    import("./core/mod.ts"),
+    import("./libs/reduxStore.ts"),
+    import("./api/platform.ts"),
+    import("./api/graphql.ts"),
+    import("./components/settingsSection.ts"),
+    import("./components/registers/index.ts")
+  ]);
 };
-
-const { promise, transformer, signal } = await hotwired<MixinContext>(import.meta);
-
-export { transformer };
-
-signal.addEventListener("abort", () => {
-  Object.defineProperty = nativeObjectDefineProperty;
-});
-
-globalThis.Spicetify = {
-  Platform: {} as any
-};
-
-promise.wrap(
-  (async () => {
-    await Promise.all([
-      import("./src/api/index.ts")
-      // import("./src/events.mix.ts"),
-      // import("./src/wpunpk.mix.ts")
-    ]);
-  })()
-);

@@ -1,8 +1,8 @@
-import { transformer } from "../../mixin.ts";
+import { transformer } from "../core/transformer.ts";
 
 import type { Store } from "npm:@types/redux";
 
-export type ReduxStore = Store;
+export type ReduxStoreT = Store;
 export let ReduxStore: ReduxStore;
 
 transformer<Storage>(
@@ -15,17 +15,10 @@ transformer<Storage>(
       set: emit
     });
 
-    // Object.defineProperty(globalThis, "__Platform", {
-    // 	set: (value) => {
-    // 		emit();
-    // 		Platform = value;
-    // 	},
-    // 	get: () => Platform,
-    // });
     return str;
   },
   {
-    glob: /^\/xpui-modules\.js/
+    glob: /^\/xpui-snapshot\.js/
   }
 ).then(($) => {
   ReduxStore = $;

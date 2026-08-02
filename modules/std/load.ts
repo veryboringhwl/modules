@@ -1,3 +1,12 @@
-import { hotwired, type LoadContext } from "/hooks/module.ts";
+import { startEventHandlers } from "./api/events.ts";
+import { createLogger } from "./api/logger.ts";
 
-await hotwired<LoadContext>(import.meta);
+import type { ModuleInstance } from "/hooks/module.ts";
+
+export let logger: Console;
+
+export default async (mod: ModuleInstance) => {
+  logger = createLogger(mod);
+
+  return startEventHandlers();
+};
