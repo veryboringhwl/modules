@@ -1,8 +1,10 @@
-import { future } from "../core/mod.ts";
+import { signal } from "../core/index.ts";
 import { React } from "../libs/react.ts";
 import { createStorage } from "./storage.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
+
+type Listener = () => void;
 
 export type Settings = {
   get<T = unknown>(key: string, fallback?: T): T;
@@ -17,9 +19,9 @@ export function createSettings(mod: ModuleInstance): Settings {
 
   const cache = new Map<string, unknown>();
 
-  const readValue = (key: string, fallback?: unknown): unknown => {
+  const readValue = <T = unknown>(key: string, fallback?: T): T => {
     const cached = cache.get(key);
-    if (cached !== undefined) return cached;
+    if (cached !== undefined) return cached as T;
 
     const raw = storage.getItem(key);
     let value: unknown;
@@ -33,7 +35,7 @@ export function createSettings(mod: ModuleInstance): Settings {
       }
     }
     cache.set(key, value);
-    return value;
+    return value as T;
   };
 
   const writeValue = (key: string, value: unknown): void => {
@@ -65,7 +67,7 @@ export function createSettings(mod: ModuleInstance): Settings {
           }
         };
         const unsubscribe = subscribe(refresh);
-        future.pull(refresh);
+        signal.pull(refresh);
         return unsubscribe;
       }, [key, fallback]);
       return value;

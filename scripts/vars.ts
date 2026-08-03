@@ -1,5 +1,6 @@
 /* oxlint-disable no-console */
 
+import { existsSync } from "jsr:@std/fs";
 import { join, resolve } from "jsr:@std/path";
 
 export const MODULE_ROOT = resolve(import.meta.dirname!, "..");
@@ -19,7 +20,7 @@ export async function getModuleDirs(): Promise<string[]> {
   const dirs: string[] = [];
   try {
     for await (const entry of Deno.readDir(MODULES_DIR)) {
-      if (entry.isDirectory) {
+      if (entry.isDirectory && existsSync(join(MODULES_DIR, entry.name, "metadata.json"))) {
         dirs.push(join("modules", entry.name));
       }
     }

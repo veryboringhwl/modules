@@ -20,7 +20,8 @@
     "disable": "deno run -A ./scripts/disable.ts",
     "local": "deno run -A ./scripts/local.ts",
     "release": {
-      "dependencies": ["fmt", "lint"]
+      "dependencies": ["fmt", "lint"],
+      "command": "deno run -A ./scripts/release.ts"
     }
   },
   "compilerOptions": {

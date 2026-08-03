@@ -24,7 +24,7 @@ export default function ({ section }: SettingsButtonProps): React.ReactElement<H
         buttonSize="sm"
         iconOnly={SettingsIcon}
         onClick={async () => {
-          const History = Platform.getHistory();
+          const History = Platform.getHistory() as unknown as { push(path: string): void };
           History.push("/preferences");
           const searchButton = await waitForElement(
             `.${MAP.settings.header.container} .${MAP.search_box.expand_button}`

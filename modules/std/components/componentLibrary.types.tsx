@@ -86,7 +86,7 @@ export interface ButtonTertiaryProps extends React.ComponentPropsWithoutRef<"but
   href?: string;
 }
 
-export interface CardProps extends React.ComponentPropsWithoutRef<"div"> {
+export interface CardProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
   as?: React.ElementType;
   id: string;
   size?: "sm" | "md";
@@ -151,6 +151,7 @@ export interface CardImageProps extends React.ComponentPropsWithoutRef<"img"> {
 export interface ChipProps extends React.ComponentPropsWithoutRef<"button"> {
   as?: React.ElementType;
   href?: string;
+  index?: number;
   size?: "sm" | "md";
   variant?: "tinted" | "contrasting" | "bordered";
   selected?: boolean;
@@ -167,7 +168,7 @@ export interface ChipProps extends React.ComponentPropsWithoutRef<"button"> {
   "data-encore-chip-id"?: string;
 }
 
-export interface FormCheckboxProps extends React.ComponentPropsWithoutRef<"input"> {
+export interface FormCheckboxProps extends Omit<React.ComponentPropsWithoutRef<"input">, "size"> {
   as?: React.ElementType;
   small?: boolean;
   size?: "small" | "medium";
@@ -176,7 +177,7 @@ export interface FormCheckboxProps extends React.ComponentPropsWithoutRef<"input
   id?: string;
 }
 
-export interface FormInputProps extends React.ComponentPropsWithoutRef<"input"> {
+export interface FormInputProps extends Omit<React.ComponentPropsWithoutRef<"input">, "size"> {
   as?: React.ElementType;
   size?: "small" | "medium" | "large";
   error?: boolean;
@@ -224,7 +225,7 @@ export interface ListProps extends React.ComponentPropsWithoutRef<"div"> {
   hasDividers?: boolean;
   gap?: string | number;
 }
-export interface ListRowProps extends React.ComponentPropsWithoutRef<"div"> {
+export interface ListRowProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
   as?: React.ElementType;
   id: string;
   size?: "sm" | "md" | "lg" | "xl" | "xxl";

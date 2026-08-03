@@ -21,7 +21,7 @@ transformer<Platform>(
   }
 ).then(($) => {
   Platform = $;
-  const registry = $.getRegistry();
+  const registry = ($ as unknown as { getRegistry(): any }).getRegistry();
   for (const s of registry._map.keys()) {
     const getter = `get${s.description}`;
     if (Object.hasOwn(Platform, getter)) {

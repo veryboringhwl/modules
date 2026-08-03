@@ -1,118 +1,138 @@
-import { fnStr } from "/hooks/util.ts";
+import { Platform } from "../api/platform.ts";
+import { findModuleComponent, findModuleComponentByFactory } from "../core/lazyComponent.ts";
+import { byCode, byComponentCode, byFactorySource } from "../core/webpack.ts";
+import { React } from "../libs/react.ts";
 
-import { webpackRequire } from "../core/wpunpk.mix.ts";
-import { matchWebpackModule } from "../core/wpunpk.ts";
+const firstExport = (exports: any) => Object.values(exports)[0];
+const firstFunction = (exports: any) => Object.values(exports).find((m) => typeof m === "function");
+const firstComponent = (exports: any) =>
+  Object.values(exports).find((m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof"));
+const firstFunctionOrObject = (exports: any) =>
+  Object.values(exports).find((m) => typeof m === "function" || typeof m === "object");
 
-import type { React } from "../libs/react.ts";
-import type * as panel from "./reactComponents.panel.ts";
-import type * as providers from "./reactComponents.providers.tsx";
-import type * as xpui from "./reactComponents.xpui.ts";
+export const Slider = findModuleComponentByFactory(byFactorySource("progressBarRef"), firstExport);
 
-export let Slider: React.FC<any>;
-export let Toggle: React.FC<any>;
-export let TracklistRow: React.FC<any>;
-
-matchWebpackModule(
-  (_id, module) => {
-    const moduleStr = fnStr(module);
-    return moduleStr.includes('"_nD_jYvjV80Rf8sX"');
-  },
-  (id, _$) => {
-    const module = webpackRequire(id);
-    Toggle = Object.values(module)[0];
-  }
+export const Toggle = findModuleComponentByFactory(
+  byFactorySource("_nD_jYvjV80Rf8sX"),
+  firstExport
 );
 
-matchWebpackModule(
-  (_id, module) => {
-    const moduleStr = fnStr(module);
-    return moduleStr.includes("progressBarRef");
-  },
-  (id, _$) => {
-    const module = webpackRequire(id);
-    Slider = Object.values(module)[0];
-  }
+export const TracklistRow = findModuleComponentByFactory(
+  byFactorySource('"data-testid":"track-icon"'),
+  firstExport
 );
 
-matchWebpackModule(
-  (_id, module) => {
-    const moduleStr = fnStr(module);
-    return moduleStr.includes('"data-testid":"track-icon"');
-  },
-  async (id, _$) => {
-    await new Promise(setTimeout);
-    const module = webpackRequire(id);
-    TracklistRow = Object.values(module)[0];
-  }
+export const Cards = {
+  Generic: findModuleComponent(
+    byCode({
+      matches: [
+        "OnMouseDown",
+        /^[^;]*headerText/,
+        /^[^;]*featureIdentifier/,
+        /^[^;]*renderCardImage/
+      ],
+      mode: "all"
+    })
+  ),
+  HeroGeneric: findModuleComponent(byCode("herocard-click-handler")),
+  CardImage: findModuleComponent(byCode('"card-image"'))
+};
+
+export const Menus = {
+  Album: findModuleComponent(byCode(/value:"album"/)),
+  PodcastShow: findModuleComponent(byCode(/value:"show"/)),
+  Artist: findModuleComponent(byCode(/value:"artist"/)),
+  Track: findModuleComponent(byCode(/value:"track"/)),
+  Playlist: findModuleComponentByFactory(
+    byFactorySource({
+      matches: ["isRootlistable", "canAdministratePermissions", "isPublished"],
+      mode: "all"
+    }),
+    firstFunctionOrObject
+  )
+};
+
+export const Nav = findModuleComponentByFactory(
+  byFactorySource({ matches: ["navigationalRoot", "noLink"], mode: "all" }),
+  firstExport
 );
 
-export let Menus: typeof xpui.Menus;
-export let Nav: typeof xpui.Nav;
-export let NavTo: typeof xpui.NavTo;
-export let InstrumentedRedirect: typeof xpui.InstrumentedRedirect;
-export let ContextMenu: typeof xpui.ContextMenu;
-export let RightClickMenu: typeof xpui.RightClickMenu;
-export let Tooltip: typeof xpui.Tooltip;
-export let Menu: typeof xpui.Menu;
-export let MenuItem: typeof xpui.MenuItem;
-export let MenuItemSubMenu: typeof xpui.MenuItemSubMenu;
-export let Snackbar: typeof xpui.Snackbar;
-export let FilterBox: typeof xpui.FilterBox;
-export let ScrollableContainer: typeof xpui.ScrollableContainer;
-export let ConfirmDialog: typeof xpui.ConfirmDialog;
-export let Router: typeof xpui.Router;
-export let Routes: typeof xpui.Routes;
-export let Route: typeof xpui.Route;
-export let GenericModal: typeof xpui.GenericModal;
-export let Dialog: typeof xpui.Dialog;
-export let Tracklist: typeof xpui.Tracklist;
-export let IconWrapper: typeof xpui.IconWrapper;
+export const Link = findModuleComponent(byComponentCode("pageId"));
 
-import("./reactComponents.xpui.ts").then((m) => {
-  Menus = m.Menus;
-  Cards = m.Cards;
-  Nav = m.Nav;
-  NavTo = m.NavTo;
-  InstrumentedRedirect = m.InstrumentedRedirect;
-  ContextMenu = m.ContextMenu;
-  RightClickMenu = m.RightClickMenu;
-  Tooltip = m.Tooltip;
-  Menu = m.Menu;
-  MenuItem = m.MenuItem;
-  MenuItemSubMenu = m.MenuItemSubMenu;
-  Snackbar = m.Snackbar;
-  FilterBox = m.FilterBox;
-  ScrollableContainer = m.ScrollableContainer;
-  ConfirmDialog = m.ConfirmDialog;
-  Router = m.Router;
-  Routes = m.Routes;
-  Route = m.Route;
-  GenericModal = m.GenericModal;
-  Dialog = m.Dialog;
-  Tracklist = m.Tracklist;
-  IconWrapper = m.IconWrapper;
-});
+export const ContextMenu = findModuleComponentByFactory(
+  byFactorySource("toggleContextMenu"),
+  firstExport
+);
 
-export let PanelContainer: typeof panel.PanelContainer;
-export let PanelContent: typeof panel.PanelContent;
-export let PanelHeader: typeof panel.PanelHeader;
+export const RightClickMenu = findModuleComponent(
+  byCode({ matches: ["action", "open", "trigger", "right-click"], mode: "all" })
+);
 
-import("./reactComponents.panel.ts").then((m) => {
-  PanelContainer = m.PanelContainer;
-  PanelContent = m.PanelContent;
-  PanelHeader = m.PanelHeader;
-});
+export const Tooltip = findModuleComponent(
+  byCode({ matches: ["hover-or-focus", "tooltip"], mode: "all" })
+);
 
-export let RemoteConfigProviderComponent: typeof providers.RemoteConfigProviderComponent;
-export let RemoteConfigProvider: typeof providers.RemoteConfigProvider;
-export let SnackbarProvider: typeof providers.SnackbarProvider;
-export let StoreProvider: typeof providers.StoreProvider;
-export let TracklistColumnsContextProvider: typeof providers.TracklistColumnsContextProvider;
+export const Menu = findModuleComponent(
+  byCode({ matches: ["getInitialFocusElement", "children"], mode: "all" })
+);
 
-import("./reactComponents.providers.tsx").then((m) => {
-  RemoteConfigProviderComponent = m.RemoteConfigProviderComponent;
-  RemoteConfigProvider = m.RemoteConfigProvider;
-  SnackbarProvider = m.SnackbarProvider;
-  StoreProvider = m.StoreProvider;
-  TracklistColumnsContextProvider = m.TracklistColumnsContextProvider;
-});
+export const MenuItem = findModuleComponent(
+  byCode({ matches: ["handleMouseEnter", "onClick"], mode: "all" })
+);
+
+export const MenuItemSubMenu = findModuleComponent(byCode("subMenuIcon"));
+
+export const FilterBox = findModuleComponent(byComponentCode("filterBoxApiRef"));
+
+export const ScrollableContainer = findModuleComponentByFactory(
+  byFactorySource({ matches: ["scrollLeft", "showButtons"], mode: "all" }),
+  firstComponent
+);
+
+export const ConfirmDialog = findModuleComponentByFactory(
+  byFactorySource("confirm-dialog-description"),
+  firstComponent
+);
+
+export const GenericModal = findModuleComponent(
+  byCode({ matches: ["isOpen", "contentLabel", "animated"], mode: "all" })
+);
+
+export const Dialog = findModuleComponent(
+  byCode({ matches: ["isOpen", "unmountWhenClose"], mode: "all" })
+);
+
+export const Tracklist = findModuleComponent(byComponentCode("nrValidItems"));
+
+export const IconWrapper = findModuleComponent(byCode("button__icon-wrapper"));
+
+export const PanelContainer = findModuleComponentByFactory(
+  byFactorySource("Desktop_PanelContainer_Id"),
+  firstFunction
+);
+
+export const PanelContent = findModuleComponentByFactory(
+  byFactorySource("fixedHeader"),
+  firstExport
+);
+
+export const PanelHeader = findModuleComponentByFactory(
+  byFactorySource("PanelHeader_CloseButton"),
+  firstExport
+);
+
+export const RemoteConfigProviderComponent = findModuleComponent(
+  byCode({ matches: ["resolveSuspense", "configuration"], mode: "all" })
+);
+
+export const RemoteConfigProvider = ({
+  configuration = Platform.getRemoteConfiguration(),
+  children
+}: {
+  configuration?: ReturnType<typeof Platform.getRemoteConfiguration>;
+  children?: React.ReactNode;
+}) => React.createElement(RemoteConfigProviderComponent, { configuration }, children);
+
+export const TracklistColumnsContextProvider = findModuleComponent(
+  byCode({ matches: ["columns", "visibleColumns", "toggleVisible"], mode: "all" })
+);

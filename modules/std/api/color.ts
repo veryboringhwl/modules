@@ -1,7 +1,14 @@
-import type * as color from "./color.xpui.ts";
+import { byCode, byProps, getModuleExport, resolveInto } from "../core/webpack.ts";
 
-export let Color: typeof color.Color;
+export let Color: Function & { Format: any };
 
-import("./color.xpui.ts").then((m) => {
-  Color = m.Color;
-});
+const assignColor = () => {
+  const main = getModuleExport<Function>(byCode("this.rgb"));
+  const format = getModuleExport<any>(byProps("RGBA"));
+  if (main && format) {
+    Color = Object.assign(main, { Format: format });
+  }
+};
+
+resolveInto(byCode("this.rgb"), assignColor);
+resolveInto(byProps("RGBA"), assignColor);

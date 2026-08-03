@@ -45,7 +45,6 @@ export const bindSlots = async (adSlots: { slotId: string }[]) => {
 };
 
 export let reduxStoreSubscription: () => void;
-export let prefsSubscription: { cancel: () => void };
 export const pauseAds = async () => {
   ReduxStore.dispatch({ type: "ADS_DISABLED" });
   ReduxStore.dispatch({ type: "ADS_PREMIUM", isPremium: true });

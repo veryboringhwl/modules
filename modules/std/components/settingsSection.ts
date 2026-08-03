@@ -1,4 +1,4 @@
-import { future } from "../core/mod.ts";
+import { signal } from "../core/index.ts";
 import { transformer } from "../core/transformer.ts";
 
 import type { React } from "../libs/react.ts";
@@ -40,7 +40,7 @@ transformer<SettingsSection>(
   }
 ).then(($) => {
   SettingsSection = $;
-  future.push();
+  signal.push();
 });
 
 transformer<SettingsRow>(

@@ -1,5 +1,6 @@
 /* oxlint-disable no-console */
 
+import { GH_RAW_CLASSMAP_URL } from "./classmap-info.ts";
 import { MODULE_ROOT } from "./vars.ts";
 
 console.log("Fetching classmap...");
@@ -9,6 +10,8 @@ const args = [
   "-A",
   "@spicetify/creator",
   "classmap-fetch",
+  "--url",
+  GH_RAW_CLASSMAP_URL,
   "--modules-dir",
   "modules",
   "--output",

@@ -1,7 +1,7 @@
 import { Locale } from "../api/locale.ts";
+import RootRegistry from "../registers/root.ts";
 import { UI } from "./componentLibrary.ts";
 import { Dialog } from "./reactComponents.ts";
-import RootRegistry from "./registers/root.ts";
 
 import type { React } from "../libs/react.ts";
 

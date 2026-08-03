@@ -1,7 +1,72 @@
-import type * as componentLibrary from "./componentLibrary.xpui.ts";
+import { findModuleComponent } from "../core/lazyComponent.ts";
+import { byEncoreName } from "../core/webpack.ts";
 
-export let UI: typeof componentLibrary.UI;
+import type {
+  AdaptiveTitleProps,
+  BoxProps,
+  ButtonPrimaryProps,
+  ButtonSecondaryProps,
+  ButtonTertiaryProps,
+  CardDetailsProps,
+  CardImageProps,
+  CardProps,
+  CardSubtitleProps,
+  CardTitleProps,
+  ChipProps,
+  FormCheckboxProps,
+  FormInputIconProps,
+  FormInputProps,
+  FormTextareaProps,
+  HorizontalRuleProps,
+  IconProps,
+  ImageProps,
+  ListProps,
+  ListRowImageProps,
+  ListRowProps,
+  ListRowTextProps,
+  LogoSpotifyProps,
+  PopoverProps,
+  ProgressCircleProps,
+  ProgressDotsProps,
+  TextLinkProps,
+  TextProps,
+  TypeListProps,
+  TypeProps,
+  VisuallyHiddenProps
+} from "./componentLibrary.types.tsx";
 
-import("./componentLibrary.xpui.ts").then((m) => {
-  UI = m.UI;
-});
+export const UI = {
+  AdaptiveTitle: findModuleComponent<AdaptiveTitleProps>(byEncoreName("AdaptiveTitle")),
+  Text: findModuleComponent<TextProps>(byEncoreName("Text")),
+  Box: findModuleComponent<BoxProps>(byEncoreName("Box")),
+  ButtonPrimary: findModuleComponent<ButtonPrimaryProps>(byEncoreName("ButtonPrimary")),
+  ButtonSecondary: findModuleComponent<ButtonSecondaryProps>(byEncoreName("ButtonSecondary")),
+  ButtonTertiary: findModuleComponent<ButtonTertiaryProps>(byEncoreName("ButtonTertiary")),
+  Card: findModuleComponent<CardProps>(byEncoreName("Card")),
+  CardTitle: findModuleComponent<CardTitleProps>(byEncoreName("CardTitle")),
+  CardSubtitle: findModuleComponent<CardSubtitleProps>(byEncoreName("CardSubtitle")),
+  CardDetails: findModuleComponent<CardDetailsProps>(byEncoreName("CardDetails")),
+  CardImage: findModuleComponent<CardImageProps>(byEncoreName("CardImage")),
+  Chip: findModuleComponent<ChipProps>(byEncoreName("Chip")),
+  FormCheckbox: findModuleComponent<FormCheckboxProps>(byEncoreName("FormCheckbox")),
+  FormInput: findModuleComponent<FormInputProps>(byEncoreName("FormInput")),
+  FormInputIcon: findModuleComponent<FormInputIconProps>(byEncoreName("FormInputIcon")),
+  FormTextarea: findModuleComponent<FormTextareaProps>(byEncoreName("FormTextarea")),
+  HorizontalRule: findModuleComponent<HorizontalRuleProps>(byEncoreName("HorizontalRule")),
+  Icon: findModuleComponent<IconProps>(byEncoreName("Icon")),
+  Image: findModuleComponent<ImageProps>(byEncoreName("Image")),
+  List: findModuleComponent<ListProps>(byEncoreName("List")),
+  ListRow: findModuleComponent<ListRowProps>(byEncoreName("ListRow")),
+  ListRowTitle: findModuleComponent<ListRowTextProps>(byEncoreName("ListRowTitle")),
+  ListRowSubtitle: findModuleComponent<ListRowTextProps>(byEncoreName("ListRowSubtitle")),
+  ListRowDetails: findModuleComponent<ListRowTextProps>(byEncoreName("ListRowDetails")),
+  ListRowImage: findModuleComponent<ListRowImageProps>(byEncoreName("ListRowImage")),
+  LogoSpotify: findModuleComponent<LogoSpotifyProps>(byEncoreName("LogoSpotify")),
+  Popover: findModuleComponent<PopoverProps>(byEncoreName("Popover")),
+  ProgressCircle: findModuleComponent<ProgressCircleProps>(byEncoreName("ProgressCircle")),
+  ProgressDots: findModuleComponent<ProgressDotsProps>(byEncoreName("ProgressDots")),
+  TextLink: findModuleComponent<TextLinkProps>(byEncoreName("TextLink")),
+  Type: findModuleComponent<TypeProps>(byEncoreName("Type")),
+  TypeList: findModuleComponent<TypeListProps>(byEncoreName("TypeList")),
+  VisuallyHidden: findModuleComponent<VisuallyHiddenProps>(byEncoreName("VisuallyHidden"))
+};

@@ -28,7 +28,14 @@ export function createSyncedStorage(playlistUri: string) {
   const CHUNK_SIZE = 200;
   const MAX_DOUBLE_CHUNKS = 1000;
 
-  const PlaylistAPI = Platform.getPlaylistAPI();
+  const PlaylistAPI = Platform.getPlaylistAPI() as unknown as {
+    getContents(
+      uri: string,
+      options: { filter: string; limit: number }
+    ): Promise<{ items: Array<{ uri: string }> }>;
+    add(uri: string, uris: string[], options: { after: string }): Promise<unknown>;
+    remove(uri: string, uris: Array<{ uri: string; uid: string }>): Promise<unknown>;
+  };
 
   function markKey(key: string) {
     return `\x02${key}\x03`;

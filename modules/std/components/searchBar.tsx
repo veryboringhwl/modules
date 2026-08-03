@@ -1,11 +1,13 @@
-import { get } from "../libs/deps.ts";
+import { FilterContext } from "../hooks/filterContext.ts";
 import { React } from "../libs/react.ts";
-import { FilterContext } from "./filterContext.ts";
 import { FilterBox } from "./reactComponents.ts";
 
 export const getProp = (obj: any, path: string) => {
   if (path.startsWith(".")) {
-    return get(obj, path.slice(1));
+    return path
+      .slice(1)
+      .split(".")
+      .reduce((acc, key) => acc?.[key], obj);
   }
   return obj;
 };

@@ -1,31 +1,37 @@
 # std
 
-The standard library for Spicetify v3 — one module, four internal layers.
+The standard library for Spicetify v3 — one module, six internal layers.
 
 ## Structure
 
-| Folder        | Contents                                                                                                                                                               | Imports               |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
-| `core/`       | Framework glue: webpack require trap, bundle analysis, registry/registrar, mixin transformer handoff, cosmos interception, `future`                                    | nothing               |
-| `libs/`       | npm packages surfaced from Spotify's bundle: React, classNames, Mousetrap, react-flip-toolkit, notistack, ReduxStore, lodash, rxjs                                     | `core`                |
-| `api/`        | Spotify platform APIs: Platform, URI, Color/Locale, GraphQL defs, event bus, settings, storage, logger, DOM                                                            | `core`, `libs`        |
-| `components/` | Spotify UI: ComponentLibrary, ReactComponents, ReactHooks/Query/Router, settings page sections, registers (menu, navlinks, playbar buttons, ...), modal and UI helpers | `core`, `libs`, `api` |
+| Folder        | Contents                                                                                                                                                                                                                                | Imports                             |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `core/`       | Framework glue: webpack runtime bridge (`webpackRuntime`), subscription-based finder (`webpack`, `byCode`/`byProps`/`byComponentCode`/`byFactorySource`), lazy components, registry/registrar, transformer handoff, `signal`, rxjs deps | nothing                             |
+| `libs/`       | npm packages surfaced from Spotify's bundle: `React`, `classnames`, `Mousetrap`, `ReactFlipToolkit`, `Notistack`, `Redux`, `ReactQuery`, `ReactRouter`, rxjs                                                                            | `core`                              |
+| `hooks/`      | Spotify-internal React hooks and contexts: `reactHooks`, `filterContext`                                                                                                                                                                | `core`, `api`                       |
+| `api/`        | Spotify platform APIs: `Platform`, `URI`, `Color`, `Locale`, `GraphQLDefs`, event bus, settings, storage, logger, DOM                                                                                                                   | `core`, `libs`                      |
+| `components/` | Spotify UI: Encore (`UI`), Spotify internals (`reactComponents`), and std-authored components (modal, dropdown, chipFilter, searchBar, ...)                                                                                             | `core`, `libs`, `api`, `hooks`      |
+| `registers/`  | Shell integration: registry + transformer pairs for menu, navlinks, playbar buttons, panels, routes, root, settings sections, topbar buttons                                                                                            | `core`, `libs`, `api`, `components` |
 
-Dependency direction is strictly one-way — `core ← libs ← api ← components`. Each layer
-exposes a single public barrel (`mod.ts`); consumer modules should only import from
-barrels, never from `src`-style paths.
+Dependency direction is strictly one-way — `core ← libs ← hooks ← api ← components/registers`. Each layer
+exposes a single public barrel (`index.ts`); consumer modules should only import from
+barrels, never from internal paths.
 
-## Bundles
+## Resolution
 
-The finder modules (`*.xpui.ts`) wait for the xpui chunks and locate Spotify's
-modules by fingerprint. Each finder group has a lazy barrel (`react.ts`,
-`reactComponents.ts`, ...) whose bindings populate asynchronously — never read
-them at module-evaluation time.
+The finder (`core/webpack.ts`) resolves Spotify internals in three phases:
+
+1. **Executed modules** — `moduleCache`, fed by `moduleExecutedSubject` (a ReplaySubject, so late importers self-heal)
+2. **Defined but not executed** — factory source scan (filters carry a `source` predicate), executing only matched modules
+3. **Not yet defined** — subscription, resolved when the chunk arrives
+
+`byCode` matches functions by source, `byComponentCode` matches React components (memo/forwardRef, immune to plain-function false positives), `byProps` matches by property shape, `byFactorySource` matches modules by factory source. `findModuleComponent` returns a lazy wrapper with `hasResolved`, `resolved`, and `moduleId` for debugging.
 
 ## Development
 
 ```
-deno task fmt modules/std      # oxfmt
-deno task lint modules/std     # oxlint
-deno check modules/std/index.ts
+deno task fmt
+deno task lint
+deno check modules/std
+creator build --modules std --classmap classmap.json
 ```

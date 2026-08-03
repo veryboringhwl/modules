@@ -2,6 +2,7 @@
 
 import { dirname, join, resolve } from "jsr:@std/path";
 
+import { GH_RAW_CLASSMAP_URL } from "./classmap-info.ts";
 import { getModuleDirs, MODULE_ROOT } from "./vars.ts";
 
 const BIN_NAME = Deno.build.os === "windows" ? "creator.exe" : "creator";
@@ -30,13 +31,17 @@ switch (subcommand) {
 
   case "watch": {
     const dirs = rest.length > 0 ? rest : await getModuleDirs();
-    await runOne(["watch", "--modules", ...dirs, "--classmap", "classmap.json", "--dev"]);
+    await runOne(["watch", "--modules", ...dirs, "--classmap", "classmap.json"]);
     break;
   }
 
-  case "release":
-    await runOne(["release", ...rest]);
+  case "release": {
+    const releaseArgs = rest.includes("--classmap-url")
+      ? rest
+      : [...rest, "--classmap-url", GH_RAW_CLASSMAP_URL];
+    await runOne(["release", ...releaseArgs]);
     break;
+  }
 
   case undefined:
     await runOne([]);
@@ -56,4 +61,3 @@ async function runOne(args: string[]): Promise<void> {
   const status = await proc.spawn().status;
   Deno.exit(status.code ?? (status.success ? 0 : 1));
 }
-

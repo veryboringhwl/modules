@@ -1,7 +1,11 @@
-import type * as classNames from "./classNames.xpui.ts";
+import { byFactorySource, resolveIntoModule } from "../core/webpack.ts";
 
-export let classnames: typeof classNames.classnames;
+import type classNames from "npm:@types/classnames";
 
-import("./classNames.xpui.ts").then((m) => {
-  classnames = m.classnames;
+export let classnames: classNames;
+
+resolveIntoModule(byFactorySource("window.classNames"), (exports) => {
+  if (typeof exports === "function") {
+    classnames = exports as classNames;
+  }
 });

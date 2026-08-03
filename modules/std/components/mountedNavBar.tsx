@@ -1,16 +1,16 @@
 import { React } from "../libs/react.ts";
 import { UI } from "./componentLibrary.ts";
-import { NavTo } from "./reactComponents.ts";
+import { Link } from "./reactComponents.ts";
 
-interface NavToChipProps {
+interface LinkChipProps {
   to: string;
   title: string;
   selected: boolean;
   onClick?: () => void;
 }
 
-const NavToChip: React.FC<NavToChipProps> = (props) => (
-  <NavTo
+const LinkChip: React.FC<LinkChipProps> = (props) => (
+  <Link
     className={MAP.search_chips.chip}
     onClick={props.onClick}
     replace
@@ -20,7 +20,7 @@ const NavToChip: React.FC<NavToChipProps> = (props) => (
     <UI.Chip selected={props.selected} selectedColorSet="invertedLight" tabIndex={-1}>
       {props.title}
     </UI.Chip>
-  </NavTo>
+  </Link>
 );
 
 export interface NavBarProps {
@@ -34,7 +34,7 @@ const NavBar = ({ namespace, categories, selectedCategory }: NavBarProps) => (
     <div className={`${MAP.search_chips.wrapper} contentSpacing`}>
       <div className={MAP.search_chips.container}>
         {categories.map((category) => (
-          <NavToChip
+          <LinkChip
             key={category}
             selected={category === selectedCategory}
             title={category}

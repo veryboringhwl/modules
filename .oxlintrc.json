@@ -2,8 +2,8 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "oxc", "react"],
   "rules": {
-    "no-console": "error",
     "no-debugger": "off",
+    "no-console": "off",
     "prefer-const": ["error", { "destructuring": "all" }],
     "curly": ["error", "multi-line"],
     "prefer-destructuring": ["error", { "VariableDeclarator": { "array": false, "object": true } }],

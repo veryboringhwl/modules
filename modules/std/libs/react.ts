@@ -1,19 +1,21 @@
-import type * as react from "./react.xpui.ts";
+import { byProps, resolveInto } from "../core/webpack.ts";
 
-export let React: typeof react.React;
-export let ReactJSX: typeof react.ReactJSX;
-export let jsx: typeof react.jsx;
-export let jsxs: typeof react.jsxs;
-export let Fragment: typeof react.Fragment;
-export let ReactDOM: typeof react.ReactDOM;
-export let ReactDOMServer: typeof react.ReactDOMServer;
+import type ReactT from "npm:@types/react";
+import type ReactDOMT from "npm:@types/react-dom";
+import type ReactDOMServerT from "npm:@types/react-dom/server";
 
-import("./react.xpui.ts").then((m) => {
-  React = m.React;
-  ReactJSX = m.ReactJSX;
-  jsx = m.jsx;
-  jsxs = m.jsxs;
-  Fragment = m.Fragment;
-  ReactDOM = m.ReactDOM;
-  ReactDOMServer = m.ReactDOMServer;
+export let React: typeof ReactT;
+export let ReactDOM: typeof ReactDOMT;
+export let ReactDOMServer: typeof ReactDOMServerT;
+
+resolveInto<typeof ReactT>(byProps("createElement"), (value) => {
+  React = value;
+});
+
+resolveInto<typeof ReactDOMT>(byProps("createRoot"), (value) => {
+  ReactDOM = value;
+});
+
+resolveInto<typeof ReactDOMServerT>(byProps("renderToString"), (value) => {
+  ReactDOMServer = value;
 });

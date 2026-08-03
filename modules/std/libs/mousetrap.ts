@@ -1,7 +1,9 @@
-import type * as mousetrap from "./mousetrap.xpui.ts";
+import { byProps, resolveInto } from "../core/webpack.ts";
 
-export let Mousetrap: typeof mousetrap.Mousetrap;
+import type MousetrapT from "npm:@types/mousetrap";
 
-import("./mousetrap.xpui.ts").then((m) => {
-  Mousetrap = m.Mousetrap;
+export let Mousetrap: typeof MousetrapT;
+
+resolveInto<typeof MousetrapT>(byProps("addKeycodes"), (value) => {
+  Mousetrap = value;
 });

@@ -1,12 +1,11 @@
 import { startEventHandlers } from "./api/events.ts";
-import { createLogger } from "./api/logger.ts";
 
-import type { ModuleInstance } from "/hooks/module.ts";
-
-export let logger: Console;
-
-export default async (mod: ModuleInstance) => {
-  logger = createLogger(mod);
+export default async () => {
+  await Promise.all([
+    import("./api/index.ts"),
+    import("./libs/index.ts"),
+    import("./components/index.ts")
+  ]);
 
   return startEventHandlers();
 };

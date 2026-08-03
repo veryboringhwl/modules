@@ -1,13 +1,7 @@
 import { createLogger } from "/modules/stdlib/mod.ts";
 
 import { configureExpFeatures } from "./src/expFeatures.ts";
-import {
-  bindSlots,
-  pauseAds,
-  prefsSubscription,
-  reduxStoreSubscription,
-  slotSubscriptions
-} from "./src/slot.ts";
+import { bindSlots, pauseAds, reduxStoreSubscription, slotSubscriptions } from "./src/slot.ts";
 import { getEsperantoClient } from "./src/utils/clients.ts";
 
 import type { SettingsClient, SlotsClient, TestingClient } from "./src/utils/clients.ts";
@@ -39,6 +33,5 @@ export default async function (mod: ModuleInstance) {
       slotSubscription.cancel();
     }
     reduxStoreSubscription();
-    prefsSubscription.cancel();
   };
 }

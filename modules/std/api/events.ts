@@ -1,22 +1,13 @@
-import { BehaviorSubject, Subscription } from "../core/deps.ts";
-import { UpdateTitlebarSubject } from "../core/events.mix.ts";
+import { rxjs } from "../core/deps.ts";
 import { Platform } from "./platform.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
+import type { PlayerState } from "/hooks/PlatformAutoGen.d.ts";
 
 export type SongProgress = {
   readonly positionMs: number;
   readonly isPaused: boolean;
   readonly trackUri: string | null;
-};
-
-type PlayerState = {
-  item?: { uri?: string } | null;
-  duration?: number;
-  positionAsOfTimestamp?: number;
-  timestamp?: number;
-  isPaused?: boolean;
-  isBuffering?: boolean;
 };
 
 type HistoryLocation = {
@@ -29,8 +20,6 @@ type HistoryLocation = {
   };
 };
 
-const PROGRESS_TICK_MS = 100;
-
 function interpolateProgress(state: unknown): SongProgress {
   if (!state || typeof state !== "object") {
     return { positionMs: 0, isPaused: true, trackUri: null };
@@ -42,7 +31,9 @@ function interpolateProgress(state: unknown): SongProgress {
   let positionMs = base;
   if (!isPaused && capturedAt !== undefined) {
     const delta = Date.now() - capturedAt;
-    if (delta > 0) positionMs = base + delta;
+    if (delta > 0) {
+      positionMs = base + delta;
+    }
   }
   return {
     positionMs,
@@ -58,26 +49,30 @@ const newEventBus = () => {
   const playerState = PlayerAPI.getState();
   return {
     Player: {
-      state_updated: new BehaviorSubject(playerState),
-      status_changed: new BehaviorSubject(playerState),
-      song_changed: new BehaviorSubject(playerState),
-      onprogress: new BehaviorSubject<SongProgress>(interpolateProgress(playerState))
+      state_updated: new rxjs.BehaviorSubject(playerState),
+      status_changed: new rxjs.BehaviorSubject(playerState),
+      song_changed: new rxjs.BehaviorSubject(playerState),
+      onprogress: new rxjs.BehaviorSubject<SongProgress>(interpolateProgress(playerState))
     },
     History: {
-      updated: new BehaviorSubject(History.location)
-    },
-    ControlMessage: {
-      titlebar_updated: new BehaviorSubject<number>(-1)
+      updated: new rxjs.BehaviorSubject(History.location)
     }
   };
 };
 
-const EventBus = newEventBus();
-export type EventBus = typeof EventBus;
+let cachedEventBus: EventBus | undefined;
 
-function linkSubjects(source: unknown, target: unknown, subscription: Subscription): void {
-  if (source instanceof BehaviorSubject) {
-    if (target instanceof BehaviorSubject) {
+const getEventBus = (): EventBus => (cachedEventBus ??= newEventBus());
+
+export type EventBus = ReturnType<typeof newEventBus>;
+
+function linkSubjects(
+  source: unknown,
+  target: unknown,
+  subscription: InstanceType<typeof rxjs.Subscription>
+): void {
+  if (source instanceof rxjs.BehaviorSubject) {
+    if (target instanceof rxjs.BehaviorSubject) {
       subscription.add(source.subscribe(target));
     }
     return;
@@ -98,8 +93,8 @@ function linkSubjects(source: unknown, target: unknown, subscription: Subscripti
 
 export const createEventBus = (mod: ModuleInstance) => {
   const eventBus = newEventBus();
-  const subscription = new Subscription();
-  linkSubjects(EventBus, eventBus, subscription);
+  const subscription = new rxjs.Subscription();
+  linkSubjects(getEventBus(), eventBus, subscription);
 
   mod._jsIndex?.disposableStack.defer(() => {
     subscription.unsubscribe();
@@ -108,48 +103,36 @@ export const createEventBus = (mod: ModuleInstance) => {
   return eventBus;
 };
 
-let cachedState: PlayerState = {};
+let previousState: PlayerState | null = null;
 const playerListener = ({ data: state }: { data: PlayerState }) => {
+  const EventBus = getEventBus();
   EventBus.Player.state_updated.next(state);
-  if (state?.item?.uri !== cachedState?.item?.uri) EventBus.Player.song_changed.next(state);
+  if (state?.item?.uri !== previousState?.item?.uri) {
+    EventBus.Player.song_changed.next(state);
+  }
   if (
-    state?.isPaused !== cachedState?.isPaused ||
-    state?.isBuffering !== cachedState?.isBuffering
+    state?.isPaused !== previousState?.isPaused ||
+    state?.isBuffering !== previousState?.isBuffering
   ) {
     EventBus.Player.status_changed.next(state);
   }
-  cachedState = state;
+  EventBus.Player.onprogress.next(interpolateProgress(state));
+  previousState = state;
 };
 
-const historyListener = (location: HistoryLocation) => EventBus.History.updated.next(location);
-
-const updateTitlebarListener = (height: number) =>
-  EventBus.ControlMessage.titlebar_updated.next(height);
-
-let progressTimer: ReturnType<typeof setInterval> | null = null;
-function startProgressEmitter() {
-  if (progressTimer !== null) return;
-  progressTimer = setInterval(() => {
-    EventBus.Player.onprogress.next(interpolateProgress(Platform.getPlayerAPI().getState()));
-  }, PROGRESS_TICK_MS);
-}
+const historyListener = (location: HistoryLocation) => getEventBus().History.updated.next(location);
 
 export function startEventHandlers() {
-  const cancelPlayerListener = Platform.getPlayerAPI()
-    .getEvents()
-    .addListener("update", playerListener);
-  const cancelHistoryListener = Platform.getHistory().listen(historyListener);
-  const updateTitlebarListenerSubscription =
-    UpdateTitlebarSubject.subscribe(updateTitlebarListener);
-  startProgressEmitter();
+  const playerEvents = Platform.getPlayerAPI().getEvents() as unknown as {
+    addListener(event: "update", listener: (event: { data: PlayerState }) => void): () => void;
+  };
+  const cancelPlayerListener = playerEvents.addListener("update", playerListener);
+  const cancelHistoryListener = Platform.getHistory().listen(
+    historyListener
+  ) as unknown as () => void;
 
   return () => {
     cancelPlayerListener();
     cancelHistoryListener();
-    updateTitlebarListenerSubscription.unsubscribe();
-    if (progressTimer !== null) {
-      clearInterval(progressTimer);
-      progressTimer = null;
-    }
   };
 }
