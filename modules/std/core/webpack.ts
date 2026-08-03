@@ -1,4 +1,4 @@
-import { moduleDefinedSubject, moduleExecutedSubject, webpackRequire } from "./webpackRuntime.ts";
+import { moduleExecutedSubject, webpackRequire } from "./webpackRuntime.ts";
 
 import type { WebpackModule, WebpackRequire } from "./webpackRuntime.ts";
 
@@ -6,13 +6,7 @@ export type Match = string | RegExp;
 export type AnyMatch = Match | { matches: Match[]; mode: "any" | "all" };
 export type ModuleMatcher = (id: keyof any, module: WebpackModule) => boolean;
 
-export type SourcePredicate = {
-  test: (src: string) => boolean;
-};
-
-export type ExportFilter = ((moduleExport: any) => boolean) & {
-  source?: SourcePredicate;
-};
+export type ExportFilter = (moduleExport: any) => boolean;
 
 const IDENTIFIER_REGEX = String.raw`(?:[A-Za-z_$][\w$]*)`;
 
@@ -95,7 +89,6 @@ export const byCode = (match: AnyMatch): ExportFilter => {
 
     return false;
   };
-  filter.source = { test: (src) => srcMatches(src, match) };
 
   return filter;
 };
@@ -123,7 +116,6 @@ export const byComponentCode = (match: AnyMatch): ExportFilter => {
 
     return false;
   };
-  filter.source = { test: (src) => srcMatches(src, match) };
 
   return filter;
 };
@@ -133,7 +125,6 @@ export const byProps = (...props: string[]): ExportFilter => {
     moduleExport !== null &&
     (typeof moduleExport === "object" || typeof moduleExport === "function") &&
     props.every((prop) => prop in moduleExport);
-  filter.source = { test: (src) => props.every((prop) => src.includes(prop)) };
 
   return filter;
 };
@@ -149,7 +140,6 @@ export const byEncoreName = (name: string): ExportFilter => {
 
   const result: ExportFilter = (moduleExport: any): boolean =>
     moduleExport?.displayName === name || filter(moduleExport);
-  result.source = filter.source;
 
   return result;
 };
@@ -248,15 +238,6 @@ function getWebpackRequire(): WebpackRequire | undefined {
   return webpackRequire ?? globalThis.__webpack_require__;
 }
 
-function executeFactory(wpr: WebpackRequire, id: keyof any): any {
-  try {
-    return wpr(id);
-  } catch (error) {
-    console.warn("[std:webpack] module execution failed", id, error);
-    return undefined;
-  }
-}
-
 function findCachedExports(filter: ExportFilter): ExportSource[] {
   const results: ExportSource[] = [];
 
@@ -284,62 +265,12 @@ function findCachedExports(filter: ExportFilter): ExportSource[] {
   return results;
 }
 
-function findFactoryExports(filter: ExportFilter): ExportSource[] {
-  const { source } = filter;
-  if (!source) {
-    return [];
-  }
-
-  const wpr = getWebpackRequire();
-  if (!wpr) {
-    return [];
-  }
-
-  const results: ExportSource[] = [];
-
-  for (const [id, factory] of Object.entries(wpr.m)) {
-    if (typeof factory !== "function" || moduleCache.has(id)) {
-      continue;
-    }
-
-    if (!source.test(sourceOf(factory))) {
-      continue;
-    }
-
-    const exports = executeFactory(wpr, id);
-    if (exports === undefined) {
-      continue;
-    }
-
-    if (checkExport(exports, filter)) {
-      results.push({ id, value: exports });
-      continue;
-    }
-
-    if (typeof exports !== "object" || exports === null) {
-      continue;
-    }
-
-    for (const child of Object.values(exports)) {
-      if (checkExport(child, filter)) {
-        results.push({ id, value: child });
-      }
-    }
-  }
-
-  return results;
-}
-
 function findExportSource<T = any>(filter: ExportFilter): ExportSource<T> | undefined {
-  return (findCachedExports(filter)[0] ?? findFactoryExports(filter)[0]) as
-    | ExportSource<T>
-    | undefined;
+  return findCachedExports(filter)[0] as ExportSource<T> | undefined;
 }
 
 export function findAllModuleExports<T = any>(filter: ExportFilter): T[] {
-  return [...findCachedExports(filter), ...findFactoryExports(filter)].map(
-    ({ value }) => value
-  ) as T[];
+  return findCachedExports(filter).map(({ value }) => value) as T[];
 }
 
 export function getModuleExport<T = any>(filter: ExportFilter): T | undefined {
@@ -389,29 +320,6 @@ export function resolveIntoSource<T = any>(
   });
 }
 
-export function resolveIntoModule(matcher: ModuleMatcher, onChange: (exports: any) => void): void {
-  const sync = matchModuleSync(matcher);
-  if (sync) {
-    onChange(sync[1]);
-    return;
-  }
-
-  const subscription = moduleDefinedSubject.subscribe(([id, module]) => {
-    if (!matcher(id, module)) {
-      return;
-    }
-
-    subscription.unsubscribe();
-
-    try {
-      onChange(webpackRequire(id));
-    } catch (error) {
-      console.warn("[std:webpack] module execution deferred", id, error);
-      resolveOnExecuted(matcher, (_executedId, exports) => onChange(exports));
-    }
-  });
-}
-
 function findCachedModule(...props: string[]): any | undefined {
   for (const exports of moduleCache.values()) {
     if (typeof exports === "object" && exports !== null && props.every((prop) => prop in exports)) {
@@ -422,37 +330,8 @@ function findCachedModule(...props: string[]): any | undefined {
   return undefined;
 }
 
-function findFactoryModule(...props: string[]): any | undefined {
-  const wpr = getWebpackRequire();
-  if (!wpr) {
-    return undefined;
-  }
-
-  for (const [id, factory] of Object.entries(wpr.m)) {
-    if (typeof factory !== "function" || moduleCache.has(id)) {
-      continue;
-    }
-
-    const src = sourceOf(factory);
-    if (!props.every((prop) => src.includes(prop))) {
-      continue;
-    }
-
-    const exports = executeFactory(wpr, id);
-    if (exports === undefined) {
-      continue;
-    }
-
-    if (typeof exports === "object" && exports !== null && props.every((prop) => prop in exports)) {
-      return exports;
-    }
-  }
-
-  return undefined;
-}
-
 export function findModule<T = Record<string, any>>(...props: string[]): Promise<T> {
-  const sync = findCachedModule(...props) ?? findFactoryModule(...props);
+  const sync = findCachedModule(...props);
   if (sync !== undefined) {
     return Promise.resolve(sync as T);
   }
@@ -478,35 +357,6 @@ function matchesModuleOrChild(exports: any, filter: ExportFilter): boolean {
   );
 }
 
-function findModuleByFactory<T = Record<string, any>>(filter: ExportFilter): T | undefined {
-  const { source } = filter;
-  if (!source) {
-    return undefined;
-  }
-
-  const wpr = getWebpackRequire();
-  if (!wpr) {
-    return undefined;
-  }
-
-  for (const [id, factory] of Object.entries(wpr.m)) {
-    if (typeof factory !== "function" || moduleCache.has(id)) {
-      continue;
-    }
-
-    if (!source.test(sourceOf(factory))) {
-      continue;
-    }
-
-    const exports = executeFactory(wpr, id);
-    if (exports !== undefined && matchesModuleOrChild(exports, filter)) {
-      return exports;
-    }
-  }
-
-  return undefined;
-}
-
 export function findModuleByExportSync<T = Record<string, any>>(
   filter: ExportFilter
 ): T | undefined {
@@ -516,7 +366,7 @@ export function findModuleByExportSync<T = Record<string, any>>(
     }
   }
 
-  return findModuleByFactory<T>(filter);
+  return undefined;
 }
 
 export function findModuleByExport<T = Record<string, any>>(filter: ExportFilter): Promise<T> {
@@ -533,23 +383,17 @@ export function findModuleByExport<T = Record<string, any>>(filter: ExportFilter
   });
 }
 
+function matchesModuleFactory(id: keyof any, matcher: ModuleMatcher): boolean {
+  const factory = getWebpackRequire()?.m[id];
+  return typeof factory === "function" && matcher(id, factory);
+}
+
 export function matchModuleSyncAll(matcher: ModuleMatcher): Array<[keyof any, any]> {
   const results: Array<[keyof any, any]> = [];
 
-  const wpr = getWebpackRequire();
-  if (!wpr) {
-    return results;
-  }
-
-  for (const [id, module] of Object.entries(wpr.m)) {
-    if (!matcher(id, module)) {
-      continue;
-    }
-
-    try {
-      results.push([id, wpr(id)]);
-    } catch (error) {
-      console.warn("[std:webpack] module execution failed", id, error);
+  for (const [id, exports] of moduleCache) {
+    if (matchesModuleFactory(id, matcher)) {
+      results.push([id, exports]);
     }
   }
 
@@ -561,45 +405,25 @@ export function matchModuleSync(matcher: ModuleMatcher): [keyof any, any] | null
 }
 
 export function matchModule(matcher: ModuleMatcher): Promise<[keyof any, any]> {
-  const sync = matchModuleSync(matcher);
-  if (sync) {
-    return Promise.resolve(sync);
-  }
-
   return new Promise((resolve) => {
-    const subscription = moduleDefinedSubject.subscribe(([id, module]) => {
-      if (!matcher(id, module)) {
+    const subscription = moduleExecutedSubject.subscribe(([id, exports]) => {
+      if (!matchesModuleFactory(id, matcher)) {
         return;
       }
 
       subscription.unsubscribe();
-
-      try {
-        resolve([id, webpackRequire(id)]);
-      } catch (error) {
-        console.warn("[std:webpack] module execution deferred", id, error);
-        resolveOnExecuted(matcher, (executedId, exports) => resolve([executedId, exports]));
-      }
+      resolve([id, exports]);
     });
   });
 }
 
-function resolveOnExecuted(
-  matcher: ModuleMatcher,
-  onChange: (id: keyof any, exports: any) => void
-): void {
-  const wpr = getWebpackRequire();
-  if (!wpr) {
-    return;
-  }
-
+export function resolveIntoModule(matcher: ModuleMatcher, onChange: (exports: any) => void): void {
   const subscription = moduleExecutedSubject.subscribe(([id, exports]) => {
-    const factory = wpr.m[id];
-    if (typeof factory !== "function" || !matcher(id, factory)) {
+    if (!matchesModuleFactory(id, matcher)) {
       return;
     }
 
     subscription.unsubscribe();
-    onChange(id, exports);
+    onChange(exports);
   });
 }

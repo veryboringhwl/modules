@@ -27,7 +27,7 @@ export {
   sourceOf,
   srcMatches
 } from "./webpack.ts";
-export type { AnyMatch, ExportFilter, Match, ModuleMatcher, SourcePredicate } from "./webpack.ts";
+export type { AnyMatch, ExportFilter, Match, ModuleMatcher } from "./webpack.ts";
 export {
   webpackRequire,
   webpackRequireReady,
