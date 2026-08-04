@@ -76,15 +76,11 @@ export const byCode = (match: AnyMatch): ExportFilter => {
     typeof moduleExport === "function" && srcMatches(sourceOf(moduleExport), match);
 
   const filter: ExportFilter = (moduleExport: any): boolean => {
-    if (typeof moduleExport !== "function") {
-      return false;
-    }
-
     if (matches(moduleExport)) {
       return true;
     }
 
-    if (!moduleExport.$$typeof) {
+    if (!moduleExport?.$$typeof) {
       return false;
     }
 
@@ -142,7 +138,7 @@ export const byProps = (...props: string[]): ExportFilter => {
 export const byEncoreName = (name: string): ExportFilter => {
   const filter = byCode({
     matches: [
-      new RegExp(String.raw`"data-encore-id":\i\.\i\.${name}[\s,}]`),
+      new RegExp(String.raw`"data-encore-id":\s*\i\.\i\.${name}\b`),
       new RegExp(`"data-testid":"${name}"`)
     ],
     mode: "any"
