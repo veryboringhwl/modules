@@ -1,10 +1,13 @@
+import { createApi, resolve } from "../core/expose.ts";
 import { findModuleComponent } from "../core/lazyComponent.ts";
-import { byCode, resolveInto } from "../core/webpack.ts";
+import { byCode } from "../core/webpack.ts";
 
+import type { LazyComponent } from "../core/lazyComponent.ts";
 import type React from "npm:@types/react";
 import type {
   EnqueueSnackbar as EnqueueSnackbarT,
   OptionsObject as OptionsObjectT,
+  SnackbarProviderProps,
   useSnackbar as useSnackbarT
 } from "npm:notistack";
 
@@ -16,9 +19,25 @@ type CustomSnackbar = (
   opts: FN_useCustomSnackbar_OPTS
 ) => ReturnType<EnqueueSnackbarT>;
 
-export const Notistack = {
-  useSnackbar: undefined as unknown as typeof useSnackbarT,
-  useCustomSnackbar: undefined as unknown as CustomSnackbar,
+export type NotistackApi = {
+  useSnackbar: typeof useSnackbarT;
+  useCustomSnackbar: CustomSnackbar;
+  SnackbarProvider: React.FC<SnackbarProviderProps>;
+  Snackbar: {
+    wrapper: LazyComponent<any>;
+    simpleLayout: LazyComponent<any>;
+    ctaText: LazyComponent<any>;
+    styledImage: LazyComponent<any>;
+  };
+};
+
+export const Notistack = createApi<NotistackApi>({
+  useSnackbar: resolve(
+    byCode(/^function\(\)\{return\(0,[a-zA-Z_$][\w$]*\.useContext\)\([a-zA-Z_$][\w$]*\)\}$/)
+  ),
+  useCustomSnackbar: resolve(
+    byCode({ matches: ["enqueueCustomSnackbar", "headless"], mode: "all" })
+  ),
   SnackbarProvider: findModuleComponent(byCode("enqueueSnackbar called with invalid argument")),
   Snackbar: {
     wrapper: findModuleComponent(
@@ -30,18 +49,4 @@ export const Notistack = {
     ctaText: findModuleComponent(byCode("ctaText")),
     styledImage: findModuleComponent(byCode("placeholderSrc"))
   }
-};
-
-resolveInto<typeof useSnackbarT>(
-  byCode(/^function\(\)\{return\(0,[a-zA-Z_$][\w$]*\.useContext\)\([a-zA-Z_$][\w$]*\)\}$/),
-  (value) => {
-    Notistack.useSnackbar = value;
-  }
-);
-
-resolveInto<CustomSnackbar>(
-  byCode({ matches: ["enqueueCustomSnackbar", "headless"], mode: "all" }),
-  (value) => {
-    Notistack.useCustomSnackbar = value;
-  }
-);
+});

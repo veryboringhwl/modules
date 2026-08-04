@@ -1,11 +1,11 @@
 import { byFactorySource, resolveIntoModule } from "../core/webpack.ts";
 
-import type classNames from "npm:@types/classnames";
+import type classNames from "npm:classnames";
 
-export let classnames: classNames;
+export let classnames: typeof classNames;
 
 resolveIntoModule(byFactorySource("window.classNames"), (exports) => {
   if (typeof exports === "function") {
-    classnames = exports as classNames;
+    classnames = exports as typeof classNames;
   }
 });

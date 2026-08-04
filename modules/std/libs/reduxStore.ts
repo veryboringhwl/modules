@@ -1,33 +1,59 @@
+import { captureGlobal, createApi, resolve } from "../core/expose.ts";
 import { findModuleComponent } from "../core/lazyComponent.ts";
-import { transformer } from "../core/transformer.ts";
 import { byCode } from "../core/webpack.ts";
 
-import type { Store } from "npm:@types/redux";
+import type React from "npm:@types/react";
+import type {
+  connect as connectT,
+  ProviderProps,
+  useSelector as useSelectorT,
+  useDispatch as useDispatchT,
+  useStore as useStoreT
+} from "npm:react-redux";
+import type {
+  applyMiddleware as applyMiddlewareT,
+  combineReducers as combineReducersT,
+  compose as composeT,
+  createStore as createStoreT,
+  Store as StoreT
+} from "npm:redux";
 
-export type ReduxStoreT = Store;
+export type ReduxStoreT = StoreT;
 
-export const Redux = {
-  store: undefined as unknown as ReduxStoreT,
-  StoreProvider: findModuleComponent(
-    byCode({ matches: ["notifyNestedSubs", "serverState"], mode: "all" })
-  )
+export type ReduxApi = {
+  store: StoreT;
+  Provider: React.FC<ProviderProps>;
+  connect: typeof connectT;
+  useSelector: typeof useSelectorT;
+  useDispatch: typeof useDispatchT;
+  useStore: typeof useStoreT;
+  combineReducers: typeof combineReducersT;
+  applyMiddleware: typeof applyMiddlewareT;
+  compose: typeof composeT;
+  createStore: typeof createStoreT;
 };
 
-transformer<ReduxStoreT>(
-  (emit) => (str) => {
-    str = str.replace(
+export const Redux = createApi<ReduxApi>({
+  store: captureGlobal<ReduxStoreT>("__ReduxStore", /^\/xpui-snapshot\.js/, (str, name) =>
+    str.replace(
       /\.jsx\)\(([a-zA-Z_$][\w$]*),\{store:([a-zA-Z_$][\w$]*),platform:([a-zA-Z_$][\w$]*)\}\)/,
-      ".jsx)($1,{store:__ReduxStore=$2,platform:__Platform=$3})"
-    );
-    Object.defineProperty(globalThis, "__ReduxStore", {
-      set: emit
-    });
-
-    return str;
-  },
-  {
-    glob: /^\/xpui-snapshot\.js/
-  }
-).then(($) => {
-  Redux.store = $;
+      `.jsx)($1,{store:${name}=$2,platform:__Platform=$3})`
+    )
+  ),
+  Provider: findModuleComponent(
+    byCode({ matches: ["notifyNestedSubs", "serverState"], mode: "all" })
+  ),
+  connect: resolve(byCode("initMapStateToProps")),
+  useSelector: resolve(
+    byCode({
+      matches: [new RegExp(String.raw`{equalityFn:\i`), "addNestedSub"],
+      mode: "all"
+    })
+  ),
+  useDispatch: resolve(byCode(new RegExp(String.raw`return \i\(\)\.dispatch\}`))),
+  useStore: resolve(byCode(new RegExp(String.raw`let\{store:\i\}=\i\(\)`))),
+  combineReducers: resolve(byCode(new RegExp(String.raw`type:\i\.PROBE_UNKNOWN_ACTION\(\)`))),
+  applyMiddleware: resolve(byCode({ matches: ["getState", "void 0,arguments"], mode: "all" })),
+  compose: resolve(byCode({ matches: ["0===t.length", "void 0,arguments"], mode: "all" })),
+  createStore: resolve(byCode("replaceReducer"))
 });

@@ -1,6 +1,7 @@
 import { toPascalCase } from "/hooks/std/text.ts";
 
-import { findModuleByExportSync, resolveInto, sourceOf } from "../core/webpack.ts";
+import { createApi, fromModule, selectExport } from "../core/expose.ts";
+import { byCode, byFactorySource, sourceOf } from "../core/webpack.ts";
 
 export type ParsableAsURI = any;
 
@@ -186,103 +187,74 @@ type URIModule = {
   create: Create;
 };
 
-const URIModuleFilter = (v: any) =>
-  v !== null && typeof v === "object" && "PLAYLIST_V2" in v && "TRACK" in v;
+const uriModule = byFactorySource({
+  matches: ["Invalid Spotify URI!", "play.spotify.com/"],
+  mode: "all"
+});
 
-const buildURIModule = (URIModule: Record<string, any>): URIModule => {
-  const TypesEntry =
-    "PLAYLIST_V2" in URIModule && "TRACK" in URIModule
-      ? URIModule
-      : Object.values(URIModule).find(
-          (v: any) => v && typeof v === "object" && "PLAYLIST_V2" in v && "TRACK" in v
-        );
+const getTypes = (exports: any): URITypes => {
+  const entry = Object.values(exports).find(
+    (v: any) => v && typeof v === "object" && "PLAYLIST_V2" in v && "TRACK" in v
+  );
 
-  if (!TypesEntry) {
+  if (!entry) {
     throw new Error("Failed to find URI Types");
   }
 
-  const Types = TypesEntry as URITypes;
-  const TypesKeys = Object.keys(Types);
-
-  const remainingFns = Object.values(URIModule).filter(
-    (v): v is Function => typeof v === "function"
-  );
-
-  const findAndExcludeBy = (matcher: (fn: Function, str: string) => boolean) => {
-    const i = remainingFns.findIndex((fn) => matcher(fn, sourceOf(fn)));
-    if (i === -1) {
-      return undefined;
-    }
-
-    return remainingFns.splice(i, 1)[0];
-  };
-
-  const from = findAndExcludeBy((_, str) => str.includes("allowedTypes")) as any;
-  const fromString = findAndExcludeBy(
-    (_, str) => str.includes("Argument `uri`") || str.includes("Argument \\`uri\\`")
-  ) as any;
-  const idToHex = findAndExcludeBy((_, str) => /22\s*===/.test(str) || /===\s*22/.test(str)) as any;
-  const hexToId = findAndExcludeBy((_, str) => /32\s*===/.test(str) || /===\s*32/.test(str)) as any;
-  const urlEncode = findAndExcludeBy((_, str) => str.includes(".URI")) as any;
-  const isSameIdentity = findAndExcludeBy((_, str) => /\w+\.id\s*===\s*\w+\.id/.test(str)) as any;
-
-  const isTestFn = (fn: Function) => {
-    const str = sourceOf(fn);
-    return /===\s*[\w$]+\./.test(str);
-  };
-
-  const isCreateFn = (fn: Function) => {
-    const str = sourceOf(fn);
-    return /\([\w$]+\./.test(str);
-  };
-
-  const getTypeFromFn = (fn: Function) => {
-    const str = sourceOf(fn);
-
-    for (const type of TypesKeys) {
-      const regex = new RegExp(`\\.${type}(?!_)`);
-      if (regex.test(str)) {
-        return type;
-      }
-    }
-
-    return null;
-  };
-
-  const fnsByType = Object.groupBy(remainingFns, (fn) =>
-    isTestFn(fn) ? "test" : isCreateFn(fn) ? "create" : "unknown"
-  );
-
-  const is: Is = Object.fromEntries(
-    (fnsByType.test || []).map((fn) => {
-      const type = getTypeFromFn(fn);
-      if (!type) {
-        return ["Unknown", fn];
-      }
-
-      return [toPascalCase(type), fn];
-    })
-  ) as any;
-
-  const create: Create = Object.fromEntries(
-    (fnsByType.create || []).map((fn) => {
-      const type = getTypeFromFn(fn);
-      if (!type) {
-        return ["Unknown", fn];
-      }
-
-      return [toPascalCase(type), fn];
-    })
-  ) as any;
-
-  return { Types, from, fromString, idToHex, hexToId, urlEncode, isSameIdentity, is, create };
+  return entry as URITypes;
 };
 
-export let URI: URIModule;
+const getFunctionExports = (exports: any): Function[] =>
+  Object.values(exports).filter((v): v is Function => typeof v === "function");
 
-resolveInto(URIModuleFilter, () => {
-  const module = findModuleByExportSync(URIModuleFilter);
-  if (module) {
-    URI = buildURIModule(module);
+const getTypeKeys = (exports: any): string[] => Object.keys(getTypes(exports));
+
+const isTestFn = (fn: Function) =>
+  /\?\s*void 0\s*:\s*\w+\.type\)\s*===\s*\w+\.\w+/.test(sourceOf(fn));
+
+const isCreateFn = (fn: Function) => /return\s+\w+\(\w+\.\w+,/.test(sourceOf(fn));
+
+const getTypeFromFn = (fn: Function, typeKeys: string[]) => {
+  const str = sourceOf(fn);
+
+  for (const type of typeKeys) {
+    const regex = new RegExp(`\\.${type}(?!_)`);
+    if (regex.test(str)) {
+      return type;
+    }
   }
+
+  return null;
+};
+
+const mapByType = (fns: Function[], typeKeys: string[]): Record<string, any> =>
+  Object.fromEntries(
+    fns.map((fn) => {
+      const type = getTypeFromFn(fn, typeKeys);
+      if (!type) {
+        return ["Unknown", fn];
+      }
+
+      return [toPascalCase(type), fn];
+    })
+  );
+
+export const URI = createApi<URIModule>({
+  Types: fromModule(uriModule, getTypes),
+  from: fromModule(uriModule, selectExport(byCode("allowedTypes"))),
+  fromString: fromModule(uriModule, selectExport(byCode(/Argument [`\\]uri[`\\]/))),
+  idToHex: fromModule(uriModule, selectExport(byCode(/22\s*===|===\s*22/))),
+  hexToId: fromModule(uriModule, selectExport(byCode(/32\s*===|===\s*32/))),
+  urlEncode: fromModule(uriModule, selectExport(byCode(/return\s+\w+\(\w+,\s*\w+\.URI\)/))),
+  isSameIdentity: fromModule(uriModule, selectExport(byCode(/\w+\.id\s*===\s*\w+\.id/))),
+  is: fromModule(
+    uriModule,
+    (exports): Is =>
+      mapByType(getFunctionExports(exports).filter(isTestFn), getTypeKeys(exports)) as Is
+  ),
+  create: fromModule(
+    uriModule,
+    (exports): Create =>
+      mapByType(getFunctionExports(exports).filter(isCreateFn), getTypeKeys(exports)) as Create
+  )
 });

@@ -1,4 +1,7 @@
+import { createApi, resolve } from "../core/expose.ts";
 import { transformer } from "../core/transformer.ts";
+import { byCode } from "../core/webpack.ts";
+import { Platform } from "./platform.ts";
 
 export type GraphQLOp = "query" | "mutation";
 export type GraphQLDef<N extends string, O extends GraphQLOp> = {
@@ -42,3 +45,21 @@ transformer(
     glob: /.+\.js$/
   }
 );
+
+export type GraphQLApi = {
+  Request: (query: unknown, variables: unknown) => Promise<unknown>;
+  Context: any;
+  Handler: any;
+};
+
+const graphQL = createApi<Omit<GraphQLApi, "Request">>({
+  Context: resolve(byCode({ matches: ["subscription", "mutation"], mode: "all" })),
+  Handler: resolve(byCode("GraphQL subscriptions are not supported"))
+});
+
+Object.defineProperty(graphQL, "Request", {
+  enumerable: true,
+  get: () => Platform.getGraphQLLoader()
+});
+
+export const GraphQL = graphQL as GraphQLApi;

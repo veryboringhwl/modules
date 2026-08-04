@@ -1,25 +1,27 @@
 import { Platform } from "../api/platform.ts";
+import {
+  selectAnyExport,
+  selectComponentExport,
+  selectFirstExport,
+  selectFunctionExport
+} from "../core/expose.ts";
 import { findModuleComponent, findModuleComponentByFactory } from "../core/lazyComponent.ts";
 import { byCode, byComponentCode, byFactorySource } from "../core/webpack.ts";
 import { React } from "../libs/react.ts";
 
-const firstExport = (exports: any) => Object.values(exports)[0];
-const firstFunction = (exports: any) => Object.values(exports).find((m) => typeof m === "function");
-const firstComponent = (exports: any) =>
-  Object.values(exports).find((m) => m && typeof m === "object" && Object.hasOwn(m, "$$typeof"));
-const firstFunctionOrObject = (exports: any) =>
-  Object.values(exports).find((m) => typeof m === "function" || typeof m === "object");
-
-export const Slider = findModuleComponentByFactory(byFactorySource("progressBarRef"), firstExport);
+export const Slider = findModuleComponentByFactory(
+  byFactorySource("progressBarRef"),
+  selectFirstExport
+);
 
 export const Toggle = findModuleComponentByFactory(
   byFactorySource("_nD_jYvjV80Rf8sX"),
-  firstExport
+  selectFirstExport
 );
 
 export const TracklistRow = findModuleComponentByFactory(
   byFactorySource('"data-testid":"track-icon"'),
-  firstExport
+  selectFirstExport
 );
 
 export const Cards = {
@@ -48,20 +50,20 @@ export const Menus = {
       matches: ["isRootlistable", "canAdministratePermissions", "isPublished"],
       mode: "all"
     }),
-    firstFunctionOrObject
+    selectAnyExport
   )
 };
 
 export const Nav = findModuleComponentByFactory(
   byFactorySource({ matches: ["navigationalRoot", "noLink"], mode: "all" }),
-  firstExport
+  selectFirstExport
 );
 
 export const Link = findModuleComponent(byComponentCode("pageId"));
 
 export const ContextMenu = findModuleComponentByFactory(
   byFactorySource("toggleContextMenu"),
-  firstExport
+  selectFirstExport
 );
 
 export const RightClickMenu = findModuleComponent(
@@ -86,12 +88,12 @@ export const FilterBox = findModuleComponent(byComponentCode("filterBoxApiRef"))
 
 export const ScrollableContainer = findModuleComponentByFactory(
   byFactorySource({ matches: ["scrollLeft", "showButtons"], mode: "all" }),
-  firstComponent
+  selectComponentExport
 );
 
 export const ConfirmDialog = findModuleComponentByFactory(
   byFactorySource("confirm-dialog-description"),
-  firstComponent
+  selectComponentExport
 );
 
 export const GenericModal = findModuleComponent(
@@ -108,17 +110,17 @@ export const IconWrapper = findModuleComponent(byCode("button__icon-wrapper"));
 
 export const PanelContainer = findModuleComponentByFactory(
   byFactorySource("Desktop_PanelContainer_Id"),
-  firstFunction
+  selectFunctionExport()
 );
 
 export const PanelContent = findModuleComponentByFactory(
   byFactorySource("fixedHeader"),
-  firstExport
+  selectFirstExport
 );
 
 export const PanelHeader = findModuleComponentByFactory(
   byFactorySource("PanelHeader_CloseButton"),
-  firstExport
+  selectFirstExport
 );
 
 export const RemoteConfigProviderComponent = findModuleComponent(

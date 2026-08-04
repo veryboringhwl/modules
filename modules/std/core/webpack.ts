@@ -1,4 +1,10 @@
-import { moduleExecutedSubject, webpackRequire } from "./webpackRuntime.ts";
+import { rxjs } from "./deps.ts";
+import {
+  WRAPPED_FACTORY,
+  moduleDefinedSubject,
+  moduleExecutedSubject,
+  webpackRequire
+} from "./webpackRuntime.ts";
 
 import type { WebpackModule, WebpackRequire } from "./webpackRuntime.ts";
 
@@ -29,6 +35,10 @@ export function srcMatches(src: string, match: AnyMatch): boolean {
 
 export const sourceOf = (value: unknown): string => {
   try {
+    if (typeof value === "function" && (value as any)[WRAPPED_FACTORY]) {
+      return value.toString();
+    }
+
     return Function.prototype.toString.call(value);
   } catch {
     return "";
@@ -404,26 +414,104 @@ export function matchModuleSync(matcher: ModuleMatcher): [keyof any, any] | null
   return matchModuleSyncAll(matcher)[0] ?? null;
 }
 
+function findRegisteredModuleId(matcher: ModuleMatcher): keyof any | undefined {
+  const modules = getWebpackRequire()?.m;
+  if (!modules) {
+    return undefined;
+  }
+
+  for (const id of Object.keys(modules)) {
+    if (matchesModuleFactory(id, matcher)) {
+      return id;
+    }
+  }
+
+  return undefined;
+}
+
+function findModuleSync(matcher: ModuleMatcher): [keyof any, any] | undefined {
+  const id = findRegisteredModuleId(matcher);
+  if (id === undefined) {
+    return undefined;
+  }
+
+  const exports = getWebpackRequire()?.(id);
+  if (exports === undefined) {
+    return undefined;
+  }
+
+  return [id, exports];
+}
+
 export function matchModule(matcher: ModuleMatcher): Promise<[keyof any, any]> {
+  const sync = findModuleSync(matcher);
+  if (sync) {
+    return Promise.resolve(sync);
+  }
+
   return new Promise((resolve) => {
-    const subscription = moduleExecutedSubject.subscribe(([id, exports]) => {
-      if (!matchesModuleFactory(id, matcher)) {
+    let settled = false;
+    const settle = (id: keyof any, exports: any) => {
+      if (settled) {
         return;
       }
-
-      subscription.unsubscribe();
+      settled = true;
       resolve([id, exports]);
-    });
+    };
+
+    moduleDefinedSubject
+      .pipe(
+        rxjs.filter(([id]) => matchesModuleFactory(id, matcher)),
+        rxjs.take(1)
+      )
+      .subscribe(([id]) => {
+        const exports = getWebpackRequire()?.(id);
+        if (exports !== undefined) {
+          settle(id, exports);
+        }
+      });
+
+    moduleExecutedSubject
+      .pipe(
+        rxjs.filter(([id]) => matchesModuleFactory(id, matcher)),
+        rxjs.take(1)
+      )
+      .subscribe(([id, exports]) => settle(id, exports));
   });
 }
 
 export function resolveIntoModule(matcher: ModuleMatcher, onChange: (exports: any) => void): void {
-  const subscription = moduleExecutedSubject.subscribe(([id, exports]) => {
-    if (!matchesModuleFactory(id, matcher)) {
+  const sync = findModuleSync(matcher);
+  if (sync) {
+    onChange(sync[1]);
+    return;
+  }
+
+  let settled = false;
+  const settle = (exports: any) => {
+    if (settled) {
       return;
     }
-
-    subscription.unsubscribe();
+    settled = true;
     onChange(exports);
-  });
+  };
+
+  moduleDefinedSubject
+    .pipe(
+      rxjs.filter(([id]) => matchesModuleFactory(id, matcher)),
+      rxjs.take(1)
+    )
+    .subscribe(([id]) => {
+      const exports = getWebpackRequire()?.(id);
+      if (exports !== undefined) {
+        settle(exports);
+      }
+    });
+
+  moduleExecutedSubject
+    .pipe(
+      rxjs.filter(([id]) => matchesModuleFactory(id, matcher)),
+      rxjs.take(1)
+    )
+    .subscribe(([, exports]) => settle(exports));
 }

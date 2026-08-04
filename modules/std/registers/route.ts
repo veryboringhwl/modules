@@ -27,6 +27,7 @@ transformer(
   }
 );
 
+// use spicetify route to not have the topbar
 transformer(
   (emit) => (str) => {
     str = str.replace('["","/","/home/",', '["","/","/home/","/spicetify/*",');
