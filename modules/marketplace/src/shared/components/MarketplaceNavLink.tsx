@@ -1,4 +1,4 @@
-import { NavLink } from "/modules/stdlib/src/registers/navlink.tsx";
+import { NavLink } from "/modules/std/registers/index.ts";
 
 import { MarketplaceActiveIcon, MarketplaceIcon } from "../icons/MarketplaceIcon.tsx";
 

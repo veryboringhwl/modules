@@ -1,6 +1,6 @@
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.xpui.ts";
+import { UI } from "/modules/std/components/index.ts";
 
-export const Modal = ({ onClose }) => {
+export const Modal = ({ onClose }: { onClose: () => void }) => {
   return (
     <div
       className={MAP.modal.widget_generator.container}

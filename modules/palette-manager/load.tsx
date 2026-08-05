@@ -1,5 +1,5 @@
-import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
-import { Color } from "/modules/stdlib/src/webpack/misc.ts";
+import { Color, createLogger } from "/modules/std/api/index.ts";
+import { createRegistrar } from "/modules/std/core/index.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
 

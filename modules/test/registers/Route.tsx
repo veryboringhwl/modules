@@ -1,17 +1,17 @@
-import { Route, Routes } from "/modules/stdlib/src/webpack/ReactComponents.ts";
-import { EncoreComponentPage } from "/modules/test/page/EncoreComponentPage.tsx";
-import { ReactComponentPage } from "/modules/test/page/ReactComponentPage.tsx";
+import { ReactRouter } from "/modules/std/libs/index.ts";
 
+import { EncoreComponentPage } from "../page/EncoreComponentPage.tsx";
 import { HomePage } from "../page/HomePage.tsx";
+import { ReactComponentPage } from "../page/ReactComponentPage.tsx";
 
 export function TestRoute() {
   return (
     <div className="test-page contentSpacing" id="TestPageID">
-      <Routes>
-        <Route element={<HomePage />} path="/" />
-        <Route element={<ReactComponentPage />} path="/ReactComponent" />
-        <Route element={<EncoreComponentPage />} path="/EncoreComponent" />
-      </Routes>
+      <ReactRouter.Routes>
+        <ReactRouter.Route element={<HomePage />} path="/" />
+        <ReactRouter.Route element={<ReactComponentPage />} path="/ReactComponent" />
+        <ReactRouter.Route element={<EncoreComponentPage />} path="/EncoreComponent" />
+      </ReactRouter.Routes>
     </div>
   );
 }

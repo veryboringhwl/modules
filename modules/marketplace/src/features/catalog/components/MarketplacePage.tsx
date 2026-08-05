@@ -5,12 +5,12 @@ import {
   useChipFilter,
   useDropdown,
   useSearchBar
-} from "/modules/stdlib/lib/components/index.tsx";
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
+} from "/modules/std/components/index.ts";
+import { React, ReactRouter } from "/modules/std/libs/index.ts";
 
 import { settings } from "../../../../load.tsx";
 import { t } from "../../../shared/i18n.ts";
+import { SETTINGS } from "../../../shared/settings.ts";
 import { useMarketplaceCatalog } from "../hooks/useMarketplaceCatalog.ts";
 import { getCatalogKey } from "../services/catalogService.ts";
 import { ModuleCard } from "./ModuleCard.tsx";
@@ -46,7 +46,7 @@ const SortFns: Record<
 const hasTag = (item: MarketplaceCatalogItem, tag: string) =>
   item.metadata?.tags.includes(tag) ?? false;
 
-const coreModuleNames = new Set(["stdlib", "marketplace"]);
+const coreModuleNames = new Set(["std", "marketplace"]);
 const isCoreModuleItem = (item: MarketplaceCatalogItem) => {
   const normalizedIdentifier = item.identifier.toLowerCase().replace(/^\/+/, "");
   const tail = normalizedIdentifier.split("/").at(-1) ?? normalizedIdentifier;
@@ -88,8 +88,9 @@ export const MarketplacePage = () => {
   } = useMarketplaceCatalog();
 
   const lastSelectedKeyRef = React.useRef<string | null>(null);
-  const { hideCoreModules } = settings.useSettings();
+  const hideCoreModules = settings.useSetting(SETTINGS.hideCoreModules, false);
   const [isVersionDialogOpen, setVersionDialogOpen] = React.useState(false);
+  const navigate = ReactRouter.useNavigate();
 
   const availableFilters = React.useMemo(
     () => ({
@@ -189,23 +190,23 @@ export const MarketplacePage = () => {
     return [...filteredBySearch].sort(sortFn);
   }, [items, search, selectedFilterFns, sortFn]);
 
-  const openDetails = React.useCallback((item: MarketplaceCatalogItem) => {
-    const artifactUrl = item.instance.getRemoteArtifactURL();
-    if (!artifactUrl) {
-      return;
-    }
+  const openDetails = React.useCallback(
+    (item: MarketplaceCatalogItem) => {
+      const artifactUrl = item.instance.getRemoteArtifactURL();
+      if (!artifactUrl) {
+        return;
+      }
 
-    const encodedArtifactUrl = encodeURIComponent(artifactUrl);
-    const query = new URLSearchParams({
-      id: item.identifier,
-      version: item.version
-    });
+      const encodedArtifactUrl = encodeURIComponent(artifactUrl);
+      const query = new URLSearchParams({
+        id: item.identifier,
+        version: item.version
+      });
 
-    Platform.getHistory().push(
-      `/bespoke/marketplace/module/${encodedArtifactUrl}?${query.toString()}`,
-      null
-    );
-  }, []);
+      navigate(`/spicetify/marketplace/module/${encodedArtifactUrl}?${query.toString()}`);
+    },
+    [navigate]
+  );
 
   const onCardSelectGesture = React.useCallback(
     (item: MarketplaceCatalogItem, event: React.MouseEvent<HTMLElement>) => {

@@ -1,4 +1,4 @@
-import { ReduxStore } from "/modules/stdlib/src/expose/ReduxStore.ts";
+import { Redux } from "/modules/std/libs/index.ts";
 
 import { logger, settingsClient, slotsClient, testingClient } from "../load.ts";
 import { retryCounter } from "./utils/counter.ts";
@@ -46,21 +46,21 @@ export const bindSlots = async (adSlots: { slotId: string }[]) => {
 
 export let reduxStoreSubscription: () => void;
 export const pauseAds = async () => {
-  ReduxStore.dispatch({ type: "ADS_DISABLED" });
-  ReduxStore.dispatch({ type: "ADS_PREMIUM", isPremium: true });
-  ReduxStore.dispatch({ type: "ADS_HPTO_HIDDEN", isHptoHidden: true });
-  ReduxStore.dispatch({ type: "ADS_POST_HIDE_HPTO", reason: "" });
+  Redux.store.dispatch({ type: "ADS_DISABLED" });
+  Redux.store.dispatch({ type: "ADS_PREMIUM", isPremium: true });
+  Redux.store.dispatch({ type: "ADS_HPTO_HIDDEN", isHptoHidden: true });
+  Redux.store.dispatch({ type: "ADS_POST_HIDE_HPTO", reason: "" });
 
-  reduxStoreSubscription = ReduxStore.subscribe(() => {
+  reduxStoreSubscription = Redux.store.subscribe(() => {
     // disables: audio, billboard, inStreamApi, leaderboard, sponsoredPlaylist, and vto
-    if (ReduxStore.getState().ads.root.adsEnabled === true) {
-      ReduxStore.dispatch({ type: "ADS_DISABLED" });
+    if (Redux.store.getState().ads.root.adsEnabled === true) {
+      Redux.store.dispatch({ type: "ADS_DISABLED" });
     }
-    if (ReduxStore.getState().ads.root.isHptoHidden === false) {
-      ReduxStore.dispatch({ type: "ADS_HPTO_HIDDEN", isHptoHidden: true });
+    if (Redux.store.getState().ads.root.isHptoHidden === false) {
+      Redux.store.dispatch({ type: "ADS_HPTO_HIDDEN", isHptoHidden: true });
     }
-    if (ReduxStore.getState().ads.root.isPremium === false) {
-      ReduxStore.dispatch({ type: "ADS_PREMIUM", isPremium: true });
+    if (Redux.store.getState().ads.root.isPremium === false) {
+      Redux.store.dispatch({ type: "ADS_PREMIUM", isPremium: true });
     }
   });
 

@@ -1,6 +1,7 @@
 import { Palette, PaletteManager } from "./preload.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
+import type { Color } from "/modules/std/api/index.ts";
 
 class Schemer {
   constructor(private mod: ModuleInstance) {

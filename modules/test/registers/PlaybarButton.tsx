@@ -1,5 +1,5 @@
-import { PlaybarButton } from "/modules/stdlib/src/registers/playbarButton.tsx";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+import { UI } from "/modules/std/components/index.ts";
+import { PlaybarButton } from "/modules/std/registers/index.ts";
 
 import { logger } from "../load.tsx";
 

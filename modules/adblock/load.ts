@@ -1,4 +1,4 @@
-import { createLogger } from "/modules/stdlib/mod.ts";
+import { createLogger } from "/modules/std/api/index.ts";
 
 import { configureExpFeatures } from "./src/expFeatures.ts";
 import { bindSlots, pauseAds, reduxStoreSubscription, slotSubscriptions } from "./src/slot.ts";

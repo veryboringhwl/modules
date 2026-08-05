@@ -1,8 +1,4 @@
-import {
-  PanelContainer,
-  PanelContent,
-  PanelHeader
-} from "/modules/stdlib/src/webpack/ReactComponents.ts";
+import { PanelContainer, PanelContent, PanelHeader } from "/modules/std/components/index.ts";
 
 export function TestPanel() {
   return (

@@ -1,8 +1,8 @@
-import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-import { TopbarRightButton } from "/modules/stdlib/src/registers/topbarRightButton.tsx";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
-import { Dialog } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+import { createLogger } from "/modules/std/api/index.ts";
+import { Dialog, UI } from "/modules/std/components/index.ts";
+import { createRegistrar } from "/modules/std/core/index.ts";
+import { React } from "/modules/std/libs/index.ts";
+import { TopbarRightButton } from "/modules/std/registers/index.ts";
 
 import { Menu } from "./modal.tsx";
 

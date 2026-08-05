@@ -1,7 +1,5 @@
 import { RootModule } from "/hooks/module.ts";
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-import { useLocation, useMatch } from "/modules/stdlib/src/webpack/ReactRouter.ts";
+import { React, ReactRouter } from "/modules/std/libs/index.ts";
 
 import { t } from "../../../shared/i18n.ts";
 import {
@@ -123,13 +121,11 @@ const resolveMarketplaceInstance = async (
 };
 
 export const ModulePage = () => {
-  const routeMatch = useMatch("/bespoke/marketplace/module/:aurl");
-  const location = useLocation();
+  const { aurl } = ReactRouter.useParams();
+  const location = ReactRouter.useLocation();
+  const navigate = ReactRouter.useNavigate();
 
-  const artifactUrl = React.useMemo(
-    () => decodeURIComponent(routeMatch?.params?.aurl ?? ""),
-    [routeMatch?.params?.aurl]
-  );
+  const artifactUrl = React.useMemo(() => decodeURIComponent(aurl ?? ""), [aurl]);
 
   const query = React.useMemo(
     () => new URLSearchParams(location?.search ?? ""),
@@ -270,7 +266,7 @@ export const ModulePage = () => {
         <div className="mkp-module__title-group">
           <button
             className="mkp-btn mkp-btn--ghost"
-            onClick={() => Platform.getHistory().push("/bespoke/marketplace/", null)}
+            onClick={() => navigate("/spicetify/marketplace/")}
             type="button"
           >
             {t("marketplace.actions.back")}

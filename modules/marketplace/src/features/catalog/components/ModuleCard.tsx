@@ -1,6 +1,5 @@
-import { display } from "/modules/stdlib/lib/modal.tsx";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-import { Cards } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+import { Cards, display } from "/modules/std/components/index.ts";
+import { React } from "/modules/std/libs/index.ts";
 
 import { t } from "../../../shared/i18n.ts";
 import { RemoteMarkdown } from "../../module/components/RemoteMarkdown.tsx";

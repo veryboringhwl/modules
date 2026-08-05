@@ -1,5 +1,5 @@
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { exportedFunctions } from "/modules/stdlib/src/webpack/index.js";
+import { Platform } from "/modules/std/api/index.ts";
+import { byProps, findAllModuleExports } from "/modules/std/core/index.ts";
 
 import { logger } from "../../load.ts";
 
@@ -25,7 +25,9 @@ export interface TestingClient {
 
 export function getEsperantoClient<T>(serviceId: string): T | undefined {
   try {
-    const Client = exportedFunctions.find((m: any) => m.SERVICE_ID === serviceId);
+    const Client = findAllModuleExports(byProps("SERVICE_ID")).find(
+      (m: any) => m.SERVICE_ID === serviceId
+    );
 
     if (!Client) {
       logger.error(`No Esperanto client found for: ${serviceId}`);

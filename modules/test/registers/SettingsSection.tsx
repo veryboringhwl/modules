@@ -1,20 +1,20 @@
-import { React } from "/modules/stdlib/src/expose/React.ts";
 import {
-  future,
   SettingsRow,
   SettingsRowEnd,
   SettingsRowStart,
-  SettingsSection
-} from "/modules/stdlib/src/expose/SettingsSection.ts";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
-import { Toggle } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+  SettingsSection,
+  Toggle,
+  UI
+} from "/modules/std/components/index.ts";
+import { signal } from "/modules/std/core/index.ts";
+import { React } from "/modules/std/libs/index.ts";
 
 export const TestSettingsSection = () => {
   const [, refresh] = React.useReducer((n) => n + 1, 0);
   const [isChecked, setIsChecked] = React.useState(false);
 
   React.useEffect(() => {
-    future.pull(refresh);
+    signal.pull(refresh);
   }, [refresh]);
 
   return (
@@ -31,7 +31,7 @@ export const TestSettingsSection = () => {
         <SettingsRowEnd>
           <Toggle
             id="toggle-probe"
-            onSelected={(newValue) => {
+            onSelected={(newValue: boolean) => {
               setIsChecked(newValue);
             }}
             value={isChecked}

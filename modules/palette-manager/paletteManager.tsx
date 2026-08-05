@@ -1,5 +1,5 @@
-import { display } from "/modules/stdlib/lib/modal.tsx";
-import { TopbarLeftButton } from "/modules/stdlib/src/registers/topbarLeftButton.tsx";
+import { display } from "/modules/std/components/index.ts";
+import { TopbarLeftButton } from "/modules/std/registers/index.ts";
 
 import Modal from "./modal.tsx";
 

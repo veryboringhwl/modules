@@ -1,4 +1,4 @@
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
+import { Platform } from "/modules/std/api/index.ts";
 
 // "spotify.desktop.remote_config_esperanto.proto.DesktopRemoteConfig";
 // if spotify ever removes RemoteConfigDebugAPI i can use this

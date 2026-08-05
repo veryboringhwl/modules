@@ -1,23 +1,20 @@
-import { React } from "/modules/stdlib/src/expose/React.ts";
 import {
   Cards,
   ConfirmDialog,
   ContextMenu,
   Dialog,
   GenericModal,
+  Link,
   Menu,
   MenuItem,
   MenuItemSubMenu,
-  NavTo,
-  Route,
-  Routes,
   ScrollableContainer,
   Slider,
   Toggle,
   Tooltip
-} from "/modules/stdlib/src/webpack/ReactComponents.ts";
-import { usePanelStateMachine } from "/modules/stdlib/src/webpack/ReactHooks.ts";
-import { useCustomSnackbar, useSnackbar } from "/modules/stdlib/src/webpack/Snackbar.js";
+} from "/modules/std/components/index.ts";
+import { usePanelStateMachine } from "/modules/std/hooks/index.ts";
+import { React, ReactRouter, Notistack } from "/modules/std/libs/index.ts";
 
 import { logger } from "../load.tsx";
 import { Card, type CardPropDoc } from "./Components/Card.tsx";
@@ -234,8 +231,8 @@ const GenericModalDemo = () => {
 };
 
 export const ReactComponentPage = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const { enqueueCustomSnackbar } = useCustomSnackbar();
+  const { enqueueSnackbar } = Notistack.useSnackbar();
+  const enqueueCustomSnackbar = Notistack.useCustomSnackbar;
   const [panelState, panelService, panelMachine] = usePanelStateMachine();
   logger.log("panelState", panelState);
   logger.log("panelService", panelService);
@@ -245,7 +242,7 @@ export const ReactComponentPage = () => {
     <div className="test-showcase-page test-showcase-page--react">
       <Section
         description="Reference + live playground for every React component currently exposed through ReactComponents.ts in this page."
-        title="Stdlib React Components"
+        title="std React Components"
       >
         <Card
           props={[
@@ -303,17 +300,17 @@ export const ReactComponentPage = () => {
 
         <Card props={navToProps} title="NavTo">
           {React.createElement(
-            NavTo as React.ElementType,
+            Link as React.ElementType,
             { to: "/home", replace: true },
             "Go to /home"
           )}
         </Card>
 
         <Card props={routesProps} title="Routes + Route">
-          <Routes>
-            <Route element={<div>shows when /home</div>} path="/home" />
-            <Route element={<div>shows when /test</div>} path="/test" />
-          </Routes>
+          <ReactRouter.Routes>
+            <ReactRouter.Route element={<div>shows when /home</div>} path="/home" />
+            <ReactRouter.Route element={<div>shows when /test</div>} path="/test" />
+          </ReactRouter.Routes>
         </Card>
       </Section>
 

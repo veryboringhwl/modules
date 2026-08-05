@@ -1,13 +1,18 @@
-import { startCase } from "/modules/stdlib/deps.ts";
-import { useSearchBar } from "/modules/stdlib/lib/components/index.tsx";
-import { createIconComponent } from "/modules/stdlib/lib/createIconComponent.tsx";
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-import { Color } from "/modules/stdlib/src/webpack/misc.ts";
-import { MenuItem } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+import { Color, Platform } from "/modules/std/api/index.ts";
+import { createIconComponent, MenuItem, useSearchBar } from "/modules/std/components/index.ts";
+import { React } from "/modules/std/libs/index.ts";
 
 import { logger } from "./load.tsx";
 import { Palette, PaletteManager } from "./preload.ts";
+
+const startCase = (str: string) =>
+  str
+    .replace(/([a-z\d])([A-Z])/g, "$1 $2")
+    .replace(/[\W_]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 
 export default function () {
   const setCurrentPalette = (_: Palette, palette: Palette) =>
@@ -86,8 +91,8 @@ const PaletteFields = (props: PaletteFieldsProps) => {
     <div className="palette-fields-container">
       <LocalInfo palette={props.palette} updatePalettes={props.updatePalettes} />
       <div className="palette-fields">
-        {Object.entries(props.palette.colors).map(([name, value]) => (
-          <PaletteField key={name} name={name} palette={props.palette} value={value} />
+        {Object.entries(props.palette.colors).map(([name]) => (
+          <PaletteField key={name} name={name} palette={props.palette} />
         ))}
       </div>
     </div>
@@ -96,7 +101,6 @@ const PaletteFields = (props: PaletteFieldsProps) => {
 
 interface PaletteFieldProps {
   name: string;
-  value: string;
   palette: Palette;
 }
 const PaletteField = (props: PaletteFieldProps) => {
@@ -109,7 +113,7 @@ const PaletteField = (props: PaletteFieldProps) => {
       const { value } = e.target;
       setValue(value);
 
-      let color: Color;
+      let color: Color | undefined;
       try {
         color = Color.fromHex(value);
       } catch (err) {
@@ -180,7 +184,10 @@ const LocalInfo = (props: LocalInfoProps) => {
       <button
         onClick={() => {
           const css = JSON.stringify(props.palette);
-          Platform.getClipboardAPI().copy(css);
+          const clipboard = Platform.getClipboardAPI() as {
+            copy(value: string): Promise<void>;
+          };
+          clipboard.copy(css);
         }}
         type="button"
       >

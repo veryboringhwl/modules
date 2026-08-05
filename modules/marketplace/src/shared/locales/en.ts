@@ -3,7 +3,7 @@ const en = {
     marketplace: {
       settings: {
         heading: "Marketplace",
-        hideCore: "Hide core modules (stdlib, marketplace, ...)",
+        hideCore: "Hide core modules (std, marketplace, ...)",
         description:
           "Use Marketplace to install and enable modules. Enabling also loads modules automatically."
       },

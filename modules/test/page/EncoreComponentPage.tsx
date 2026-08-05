@@ -1,10 +1,10 @@
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+import { UI } from "/modules/std/components/index.ts";
 
 import { logger } from "../load.tsx";
 import { Card, type CardPropDoc } from "./Components/Card.tsx";
 import { Section } from "./Components/Section.tsx";
 
-import type { React } from "/modules/stdlib/src/expose/React.ts";
+import type { React } from "/modules/std/libs/index.ts";
 
 const Icon = (props: React.ComponentProps<typeof UI.Icon>) => (
   <UI.Icon {...props} viewBox="0 0 24 24">

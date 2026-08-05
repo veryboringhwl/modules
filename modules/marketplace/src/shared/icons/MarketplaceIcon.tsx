@@ -1,4 +1,4 @@
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+import { UI } from "/modules/std/components/index.ts";
 
 function Glyph({ filled }: { filled: boolean }) {
   return (

@@ -1,4 +1,4 @@
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+import { UI } from "/modules/std/components/index.ts";
 
 export const Section = ({
   title,

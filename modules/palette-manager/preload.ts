@@ -1,5 +1,4 @@
-import { createStorage } from "/modules/stdlib/mod.ts";
-import { Color } from "/modules/stdlib/src/webpack/misc.xpui.ts";
+import { Color, createStorage } from "/modules/std/api/index.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
 
@@ -112,7 +111,7 @@ export class PaletteManager {
   }
 
   public getDefault(): Palette {
-    return this.staticPalettes.values().next().value;
+    return this.staticPalettes.values().next().value ?? defaultPalette;
   }
 
   public getPalettes(): Palette[] {

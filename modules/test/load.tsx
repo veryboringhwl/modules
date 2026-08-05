@@ -1,8 +1,7 @@
-import { createLogger, createRegistrar } from "/modules/stdlib/mod.ts";
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-// import panelReg from "/modules/stdlib/src/registers/panel.ts";
-import { Route } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+import { createLogger } from "/modules/std/api/index.ts";
+import { Platform } from "/modules/std/api/index.ts";
+import { createRegistrar } from "/modules/std/core/index.ts";
+import { React, ReactRouter } from "/modules/std/libs/index.ts";
 
 import {
   TestMenu,
@@ -33,12 +32,14 @@ export default function (mod: ModuleInstance) {
     return { default: TestRoute };
   });
   // use /spicetify/ to remove topbar but can still use normal if wanted
-  registrar.register("route", <Route element={<LazyTestRoute />} path="/spicetify/test/*" />);
+  registrar.register(
+    "route",
+    <ReactRouter.Route element={<LazyTestRoute />} path="/spicetify/test/*" />
+  );
   registrar.register("navlink", <TestNavLink />);
   registrar.register("menu", <TestMenu />);
   registrar.register("settingsSection", <TestSettingsSection />);
   // registrar.register("panel", <TestPanel />);
-  // hash = panelReg.getHash(<TestPanel />)!;
 
   // cool experimental features ive found
   configureExpFeatures();

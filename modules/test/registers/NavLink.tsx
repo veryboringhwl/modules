@@ -1,5 +1,5 @@
-import { NavLink } from "/modules/stdlib/src/registers/navlink.tsx";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
+import { UI } from "/modules/std/components/index.ts";
+import { NavLink } from "/modules/std/registers/index.ts";
 
 export const TestNavLink = () => (
   <NavLink

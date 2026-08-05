@@ -1,6 +1,6 @@
-import { Platform } from "/modules/stdlib/src/expose/Platform.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.xpui.ts";
+import { Platform } from "/modules/std/api/index.ts";
+import { UI } from "/modules/std/components/index.ts";
+import { React } from "/modules/std/libs/index.ts";
 
 import { logger } from "./load.tsx";
 
@@ -11,7 +11,31 @@ const { useEffect, useMemo, useState } = React;
 const RemoteConfigDebugAPI = Platform.getRemoteConfigDebugAPI();
 const SOURCE_FILTERS = ["all", "web", "native"] as const;
 
-const PropertyRow = ({ property, onOverride }) => {
+type RemoteConfigProperty = {
+  name: string;
+  description?: string;
+  component?: string;
+  type?: string;
+  source?: string | { toString(): string };
+  localValue?: unknown;
+  remoteValue?: unknown;
+  spec?: {
+    defaultValue?: unknown;
+    values?: string[];
+    upper?: number;
+    lower?: number;
+  };
+};
+
+type OverrideValue = string | number | boolean;
+
+const PropertyRow = ({
+  property,
+  onOverride
+}: {
+  property: RemoteConfigProperty;
+  onOverride: (property: RemoteConfigProperty, value: OverrideValue) => void;
+}) => {
   // Normalize types from the JSON (e.g. "boolean", "enum", "number")
   const propType = (property.type || "").toLowerCase();
 
@@ -63,7 +87,7 @@ const PropertyRow = ({ property, onOverride }) => {
         onChange={(e) => onOverride(property, parseFloat(e.target.value))}
         style={styles.input}
         type="number"
-        value={displayLocalValue ?? ""}
+        value={String(displayLocalValue ?? "")}
       />
     );
   } else {
@@ -72,7 +96,7 @@ const PropertyRow = ({ property, onOverride }) => {
         onChange={(e) => onOverride(property, e.target.value)}
         style={styles.input}
         type="text"
-        value={displayLocalValue || ""}
+        value={String(displayLocalValue || "")}
       />
     );
   }
@@ -110,8 +134,8 @@ const PropertyRow = ({ property, onOverride }) => {
   );
 };
 
-export const Menu = ({ onClose }) => {
-  const [properties, setProperties] = useState([]);
+export const Menu = ({ onClose }: { onClose: () => void }) => {
+  const [properties, setProperties] = useState<RemoteConfigProperty[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState("web");
   const [needsRestart, setNeedsRestart] = useState(false);
@@ -119,7 +143,7 @@ export const Menu = ({ onClose }) => {
   const loadProperties = async () => {
     try {
       const props = await RemoteConfigDebugAPI.getProperties();
-      setProperties(props || []);
+      setProperties(Array.isArray(props) ? (props as RemoteConfigProperty[]) : []);
     } catch (err) {
       logger.error("Failed to fetch Remote Config Properties:", err);
     }
@@ -130,7 +154,7 @@ export const Menu = ({ onClose }) => {
   }, []);
 
   // Handle overrides
-  const handleOverride = async (property, newValue) => {
+  const handleOverride = async (property: RemoteConfigProperty, newValue: OverrideValue) => {
     try {
       await RemoteConfigDebugAPI.setOverride(property, newValue);
 
@@ -279,7 +303,7 @@ export const Menu = ({ onClose }) => {
 };
 
 // Internal inline styles
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
   container: {
     width: "75vw",
     height: "80vh",

@@ -1,34 +1,33 @@
 import {
   createLogger,
-  createRegistrar,
   createSettings,
   createStorage,
   type Settings
-} from "/modules/stdlib/mod.ts";
-import { React } from "/modules/stdlib/src/expose/React.ts";
+} from "/modules/std/api/index.ts";
 import {
   SettingsRow,
   SettingsRowEnd,
   SettingsRowStart,
-  SettingsSection
-} from "/modules/stdlib/src/expose/SettingsSection.ts";
-import { UI } from "/modules/stdlib/src/webpack/ComponentLibrary.ts";
-import { Toggle } from "/modules/stdlib/src/webpack/ReactComponents.ts";
-import { Route } from "/modules/stdlib/src/webpack/ReactComponents.ts";
+  SettingsSection,
+  Toggle,
+  UI
+} from "/modules/std/components/index.ts";
+import { createRegistrar } from "/modules/std/core/index.ts";
+import { React, ReactRouter } from "/modules/std/libs/index.ts";
 
 import { MarketplaceNavLink } from "./src/shared/components/MarketplaceNavLink.tsx";
-import { settingsSchema } from "./src/shared/settings.ts";
+import { SETTINGS } from "./src/shared/settings.ts";
 
 import type { ModuleInstance } from "/hooks/module.ts";
 
 export let storage: Storage;
 export let logger: Console;
-export let settings: Settings<typeof settingsSchema>;
+export let settings: Settings;
 
 export let module: ModuleInstance;
 
 const MarketplaceSettings: React.FC = () => {
-  const { hideCoreModules } = settings.useSettings();
+  const hideCoreModules = settings.useSetting(SETTINGS.hideCoreModules, false);
   return (
     <SettingsSection filterMatchQuery="marketplace">
       <UI.Text as="h2" semanticColor="textBase" variant="bodyMediumBold">
@@ -44,7 +43,7 @@ const MarketplaceSettings: React.FC = () => {
           <Toggle
             id="marketplace-hide-core"
             value={hideCoreModules}
-            onSelected={() => settings.set("hideCoreModules", !hideCoreModules)}
+            onSelected={() => settings.set(SETTINGS.hideCoreModules, !hideCoreModules)}
           />
         </SettingsRowEnd>
       </SettingsRow>
@@ -56,11 +55,14 @@ export default async function (mod: ModuleInstance) {
   module = mod;
   storage = createStorage(mod);
   logger = createLogger(mod);
-  settings = createSettings(mod, settingsSchema);
+  settings = createSettings(mod);
   const registrar = createRegistrar(mod);
 
   const LazyApp = React.lazy(() => import("./src/app/MarketplaceApp.tsx"));
-  registrar.register("route", <Route element={<LazyApp />} path={"/spicetify/marketplace/*"} />);
+  registrar.register(
+    "route",
+    <ReactRouter.Route element={<LazyApp />} path={"/spicetify/marketplace/*"} />
+  );
 
   registrar.register("navlink", <MarketplaceNavLink />);
   registrar.register("settingsSection", <MarketplaceSettings />);

@@ -11,7 +11,8 @@
     "jsr:@std/semver@1.0.2": "1.0.2",
     "jsr:@std/text@1.0.4": "1.0.4",
     "jsr:@veryboringhwl/creator@^0.0.10": "0.0.10",
-    "npm:@tanstack/react-query@*": "5.101.2_react@19.2.7",
+    "npm:@tanstack/react-query-persist-client@*": "5.101.4_@tanstack+react-query@5.101.4__react@19.2.7_react@19.2.7",
+    "npm:@tanstack/react-query@*": "5.101.4_react@19.2.7",
     "npm:@types/classnames@*": "2.3.4",
     "npm:@types/mousetrap@*": "1.6.15",
     "npm:@types/react-dom@*": "19.2.3_@types+react@19.2.17",
@@ -30,7 +31,8 @@
     "npm:oxlint@^1.66.0": "1.72.0",
     "npm:oxlint@latest": "1.72.0",
     "npm:react-flip-toolkit@*": "7.2.4_react@19.2.7_react-dom@19.2.7__react@19.2.7",
-    "npm:react-router@*": "8.2.0_react@19.2.7",
+    "npm:react-router@*": "6.30.3_react@19.2.7",
+    "npm:react-router@6.30.3": "6.30.3_react@19.2.7",
     "npm:react@*": "19.2.7",
     "npm:xstate@*": "5.32.4"
   },
@@ -661,11 +663,28 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
-    "@tanstack/query-core@5.101.2": {
-      "integrity": "sha512-hH5MLoJhF7KaIGd7q3xTXGXvslI+GYlM1Z/35aSHHWaCJWB7XvTSHYuV3eM7tw+aE0mT/xMro4M4Q9rCGHT0lw=="
+    "@remix-run/router@1.23.2": {
+      "integrity": "sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w=="
     },
-    "@tanstack/react-query@5.101.2_react@19.2.7": {
-      "integrity": "sha512-seDkr6kzGzX1okaaTtZPtgA688CDPlXUz1C6xSg0ESqn04Vuc8tlrYms1s3de+znBqhPVxFRfpAfUf+6XvfPWg==",
+    "@tanstack/query-core@5.101.4": {
+      "integrity": "sha512-gNwcvOJcRbLWPOLG/2OBm+zM+Yv+MKsXKEOWC57USuZDEsI71hEErQsiEGx5wX9rzWWkfwM0fVSPoiIFSsxfiw=="
+    },
+    "@tanstack/query-persist-client-core@5.101.4": {
+      "integrity": "sha512-Bmu+RfWhwYEyYZEwSeKC0gX4+KTkiEB3yO8oz9BfAY/Jfe3ndz9EnYVhihIZPmWIr8NXayF7JuraNQcrXQQCCg==",
+      "dependencies": [
+        "@tanstack/query-core"
+      ]
+    },
+    "@tanstack/react-query-persist-client@5.101.4_@tanstack+react-query@5.101.4__react@19.2.7_react@19.2.7": {
+      "integrity": "sha512-CY5i7PPKS/5B8OR2zAs9nCbLpgqI4jN8eBhtAxKRMNHyGcQhmyOy4PkkJrAAXT+ecGj++fBJTgQw6OpyCt/2SQ==",
+      "dependencies": [
+        "@tanstack/query-persist-client-core",
+        "@tanstack/react-query",
+        "react"
+      ]
+    },
+    "@tanstack/react-query@5.101.4_react@19.2.7": {
+      "integrity": "sha512-yRg2pfOCxIs4ZJW3XYYHU/WgtD04FHSnfHlpRT7h7pR77hwkdRG4wxbKe4aq6P0RvXUTBSQpQeadS1SUYUe+KA==",
       "dependencies": [
         "@tanstack/query-core",
         "react"
@@ -763,9 +782,6 @@
     },
     "convert-source-map@2.0.0": {
       "integrity": "sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg=="
-    },
-    "cookie-es@3.1.1": {
-      "integrity": "sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg=="
     },
     "cross-spawn@7.0.6": {
       "integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
@@ -1214,10 +1230,10 @@
     "react-is@16.13.1": {
       "integrity": "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="
     },
-    "react-router@8.2.0_react@19.2.7": {
-      "integrity": "sha512-uP1LgGNHyilL1u+ZkecQk74DJOKOb6q4NLNYLRJcD/fjoogftNb5/Rj/07o/QBFsY/5MbAKPm1peTCQuVPv9cQ==",
+    "react-router@6.30.3_react@19.2.7": {
+      "integrity": "sha512-XRnlbKMTmktBkjCLE8/XcZFlnHvr2Ltdr1eJX4idL55/9BbORzyZEaIkBFDhFGCEWBBItsVrDxwx3gnisMitdw==",
       "dependencies": [
-        "cookie-es",
+        "@remix-run/router",
         "react"
       ]
     },
@@ -1300,13 +1316,33 @@
     }
   },
   "redirects": {
-    "https://esm.sh/@types/lodash@~4.17.24/clamp.d.ts": "https://esm.sh/@types/lodash@4.17.24/clamp.d.ts"
+    "https://esm.sh/@types/lodash@~4.17.20/get.d.ts": "https://esm.sh/@types/lodash@4.17.24/get.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.20/range.d.ts": "https://esm.sh/@types/lodash@4.17.24/range.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.20/startCase.d.ts": "https://esm.sh/@types/lodash@4.17.24/startCase.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.20/uniq.d.ts": "https://esm.sh/@types/lodash@4.17.24/uniq.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/clamp.d.ts": "https://esm.sh/@types/lodash@4.17.24/clamp.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/fp/capitalize.d.ts": "https://esm.sh/@types/lodash@4.17.24/fp/capitalize.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/fp/mean.d.ts": "https://esm.sh/@types/lodash@4.17.24/fp/mean.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/fp/shuffle.d.ts": "https://esm.sh/@types/lodash@4.17.24/fp/shuffle.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/sortedLastIndex.d.ts": "https://esm.sh/@types/lodash@4.17.24/sortedLastIndex.d.ts",
+    "https://esm.sh/@types/lodash@~4.17.24/sortedLastIndexBy.d.ts": "https://esm.sh/@types/lodash@4.17.24/sortedLastIndexBy.d.ts"
   },
   "remote": {
     "https://esm.sh/lodash@4.17.21/clamp": "9369fd055b967e307f37f974dd7dae8efb32316106760289ec1a54f83056f787",
     "https://esm.sh/lodash@4.17.21/denonext/clamp.mjs": "551e489b6b52d6574edbc3c16a78f5de424f0a3a6c4d762773a78ef3ff230b95",
+    "https://esm.sh/lodash@4.17.21/fp/capitalize": "5a17d5cc3a0f5fbc21928f4b8c4a5514124c759b586fa61ff8212d860670115d",
+    "https://esm.sh/lodash@4.17.21/fp/mean": "1dcb62bd04215d68bee9bab64c9b302f12fbee88d23f617495db23388a06a515",
+    "https://esm.sh/lodash@4.17.21/fp/shuffle": "9dda9bfbf3e26877220336c8a0c3a3468f41786f25188fdeebb88828cc1e5e16",
+    "https://esm.sh/lodash@4.17.21/get": "01e3b29c87b0ee1fb7b64963430a013d4d254713a5f213789c0184d74a529197",
+    "https://esm.sh/lodash@4.17.21/range": "3b63e99207a7bafc0dc12a7b44b857fa310707b4054f068068d88cd9b4d060b7",
+    "https://esm.sh/lodash@4.17.21/sortedLastIndex": "7543eebf572fad274709d1758629e351bcf6fab2df4005baf779a39ad8a30a04",
+    "https://esm.sh/lodash@4.17.21/sortedLastIndexBy": "ea6d7ec6eb7b4dc0772a5f98f603998fcfd4c00e8be3a295c07517f0e943c763",
+    "https://esm.sh/lodash@4.17.21/startCase": "8154f21218945dab19838c43f77db8af2cf19db084a1e86949f144ca4efe6e33",
+    "https://esm.sh/lodash@4.17.21/uniq": "8211b322f4c24ed84abd37eb1affd1bd3552b3f33b1c40a6492c19df9e5b2e5c",
     "https://esm.sh/rxjs@7.8.1?exports=BehaviorSubject,ReplaySubject,Subject,Subscription": "898c655a57ef3577a513ad843fe84b8b6c42df247b1007e1d733763849c4a6de",
-    "https://esm.sh/rxjs@7.8.1?exports=BehaviorSubject,Subscription,Subject": "018fa50c9aa876df68bda6e2d1ec2c0eda9d162a5745c0ceda35e464345b7d2d"
+    "https://esm.sh/rxjs@7.8.1?exports=BehaviorSubject,ReplaySubject,Subject,Subscription,filter,take": "fa8e57d5dddc6e39447e10f0b392d4a9fdc7eb5925720ac5e40e8ae11944a675",
+    "https://esm.sh/rxjs@7.8.1?exports=BehaviorSubject,Subscription,Subject": "018fa50c9aa876df68bda6e2d1ec2c0eda9d162a5745c0ceda35e464345b7d2d",
+    "https://esm.sh/rxjs@7.8.2?exports=BehaviorSubject,ReplaySubject,Subject,Subscription,filter,take": "746212d38cf05c62a1724cf21efd8daf498305dbfa8b93cf08c6833a7b0bd43f"
   },
   "workspace": {
     "dependencies": [

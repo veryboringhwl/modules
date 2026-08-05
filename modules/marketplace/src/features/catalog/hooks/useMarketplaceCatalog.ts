@@ -1,7 +1,6 @@
-import { React } from "/modules/stdlib/src/expose/React.ts";
+import { React } from "/modules/std/libs/index.ts";
 
 import { t } from "../../../shared/i18n.ts";
-// import { enqueueSnackbar } from "/modules/stdlib/src/webpack/Snackbar.ts";
 import {
   enableItemsWithDependencies,
   executeMarketplaceAction,
