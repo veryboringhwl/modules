@@ -1,10 +1,10 @@
-import { Platform } from "../api/platform.ts";
 import { UI } from "../components/componentLibrary.ts";
 import { ScrollableContainer, Tooltip } from "../components/reactComponents.ts";
 import { Registry, registerRegistry } from "../core/registry.ts";
 import { transformer } from "../core/transformer.ts";
 import { classnames } from "../libs/classNames.ts";
 import { React } from "../libs/react.ts";
+import { ReactRouter } from "../libs/reactRouter.ts";
 
 const registry = new (class extends Registry<React.ReactNode> {
   override add(value: React.ReactNode): this {
@@ -64,20 +64,9 @@ export const NavLink: React.FC<NavLinkProps> = ({
   icon,
   activeIcon
 }) => {
-  const History = Platform.getHistory();
-  const [currentPathname, setCurrentPathname] = React.useState(History.location.pathname);
-
-  const isActive =
-    currentPathname === appRoutePath || currentPathname.startsWith(`${appRoutePath}/`);
+  const navigate = ReactRouter.useNavigate();
+  const isActive = ReactRouter.useMatch({ path: appRoutePath, end: appRoutePath === "/" }) !== null;
   const currentIcon = isActive ? activeIcon : icon;
-
-  React.useEffect(() => {
-    const unlisten = History.listen(({ pathname }: { pathname: string }) => {
-      setCurrentPathname(pathname);
-    }) as () => void;
-
-    return unlisten;
-  }, [History]);
 
   return (
     <Tooltip label={localizedApp}>
@@ -89,7 +78,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
         iconOnly={(props) =>
           React.isValidElement(currentIcon) ? React.cloneElement(currentIcon, props) : null
         }
-        onClick={() => History.push(appRoutePath, undefined)}
+        onClick={() => navigate(appRoutePath)}
         size="medium"
       />
     </Tooltip>

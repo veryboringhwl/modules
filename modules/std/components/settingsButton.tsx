@@ -1,5 +1,5 @@
 import { REACT_FIBER, waitForElement } from "../api/dom.ts";
-import { Platform } from "../api/platform.ts";
+import { ReactRouter } from "../libs/reactRouter.ts";
 import { UI } from "./componentLibrary.ts";
 import { createIconComponent } from "./createIconComponent.tsx";
 import { Tooltip } from "./reactComponents.ts";
@@ -17,6 +17,7 @@ interface SettingsButtonProps {
 }
 
 export default function ({ section }: SettingsButtonProps): React.ReactElement<HTMLButtonElement> {
+  const navigate = ReactRouter.useNavigate();
   return (
     <Tooltip label="Settings" placement="top" renderInline>
       <UI.ButtonTertiary
@@ -24,8 +25,7 @@ export default function ({ section }: SettingsButtonProps): React.ReactElement<H
         buttonSize="sm"
         iconOnly={SettingsIcon}
         onClick={async () => {
-          const History = Platform.getHistory() as unknown as { push(path: string): void };
-          History.push("/preferences");
+          navigate("/preferences");
           const searchButton = await waitForElement(
             `.${MAP.settings.header.container} .${MAP.search_box.expand_button}`
           );

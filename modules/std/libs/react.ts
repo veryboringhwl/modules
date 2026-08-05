@@ -1,8 +1,9 @@
 import { byProps, resolveInto } from "../core/webpack.ts";
 
-import type ReactT from "npm:@types/react";
-import type ReactDOMT from "npm:@types/react-dom";
-import type ReactDOMServerT from "npm:@types/react-dom/server";
+import type ReactDOMServerT from "npm:@types/react-dom@18.3.1";
+import type ReactDOMT from "npm:@types/react-dom@18.3.1";
+import type ReactT from "npm:@types/react@18.3.1";
+// spotify uses v18.3.1 as of 2026-08-05
 
 export let React: typeof ReactT;
 export let ReactDOM: typeof ReactDOMT;

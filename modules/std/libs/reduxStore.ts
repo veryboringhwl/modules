@@ -9,14 +9,16 @@ import type {
   useSelector as useSelectorT,
   useDispatch as useDispatchT,
   useStore as useStoreT
-} from "npm:react-redux";
+} from "npm:react-redux@8.1.3";
+// spotify uses v8.1.3 as of 2026-08-05
 import type {
   applyMiddleware as applyMiddlewareT,
   combineReducers as combineReducersT,
   compose as composeT,
   createStore as createStoreT,
   Store as StoreT
-} from "npm:redux";
+} from "npm:redux@4.2.1";
+// spotify uses v4.2.1 as of 2026-08-05
 
 export type ReduxStoreT = StoreT;
 
